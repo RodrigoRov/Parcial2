@@ -21,9 +21,8 @@ public class GeneralNews extends Fragment {
     GridLayoutManager mLayoutManager;
     RecyclerView recyclerView;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generalnews,container,false);
 
         recyclerView = v.findViewById(R.id.generalnews_fragment_recyclerview);
