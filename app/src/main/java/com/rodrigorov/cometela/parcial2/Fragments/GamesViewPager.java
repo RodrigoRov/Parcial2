@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import com.rodrigorov.cometela.parcial2.Adapters.ViewPagerAdapter;
 import com.rodrigorov.cometela.parcial2.R;
 
-public class ViewPager extends Fragment{
+public class GamesViewPager extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

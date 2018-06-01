@@ -13,7 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.rodrigorov.cometela.parcial2.Fragments.GeneralNews;
-import com.rodrigorov.cometela.parcial2.Fragments.ViewPager;
+import com.rodrigorov.cometela.parcial2.Fragments.GamesViewPager;
 import com.rodrigorov.cometela.parcial2.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_gallery) {
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.contentFrame,new ViewPager());
+                    fragmentTransaction.replace(R.id.contentFrame,new GamesViewPager());
                     fragmentTransaction.commit();
                 } else if (id == R.id.nav_slideshow) {
 
