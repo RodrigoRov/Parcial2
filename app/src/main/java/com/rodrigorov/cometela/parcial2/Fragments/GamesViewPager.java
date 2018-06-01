@@ -21,7 +21,9 @@ public class GamesViewPager extends Fragment{
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getFragmentManager());
         viewPagerAdapter.AddItem("Noticias",new GeneralNews());
+        viewPagerAdapter.AddItem("Top Players",new TopPlayers());
         viewPagerAdapter.AddItem("Imagenes",new ImagesFragment());
+
 
         android.support.v4.view.ViewPager viewPager = v.findViewById(R.id.view_pager);
         viewPager.setAdapter(viewPagerAdapter);
