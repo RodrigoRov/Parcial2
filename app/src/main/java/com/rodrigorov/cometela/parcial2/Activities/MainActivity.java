@@ -45,18 +45,14 @@ public class MainActivity extends AppCompatActivity {
 
                 if (id == R.id.nav_general_news) {
 
-                } else if (id == R.id.nav_gallery) {
+                } else if (id == R.id.nav_games) {
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.contentFrame,new GamesViewPager());
                     fragmentTransaction.commit();
-                } else if (id == R.id.nav_slideshow) {
+                } else if (id == R.id.nav_settings) {
 
-                } else if (id == R.id.nav_manage) {
-
-                } else if (id == R.id.nav_share) {
-
-                } else if (id == R.id.nav_send) {
+                } else if (id == R.id.nav_favs) {
 
                 }
 
