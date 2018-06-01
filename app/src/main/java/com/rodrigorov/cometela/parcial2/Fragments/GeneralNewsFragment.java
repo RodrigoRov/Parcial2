@@ -17,7 +17,7 @@ import com.rodrigorov.cometela.parcial2.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeneralNews extends Fragment {
+public class GeneralNewsFragment extends Fragment {
     GridLayoutManager mLayoutManager;
     RecyclerView recyclerView;
 

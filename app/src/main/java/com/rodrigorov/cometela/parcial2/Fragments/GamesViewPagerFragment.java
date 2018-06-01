@@ -1,8 +1,6 @@
 package com.rodrigorov.cometela.parcial2.Fragments;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,7 +10,7 @@ import android.view.ViewGroup;
 import com.rodrigorov.cometela.parcial2.Adapters.ViewPagerAdapter;
 import com.rodrigorov.cometela.parcial2.R;
 
-public class GamesViewPager extends Fragment{
+public class GamesViewPagerFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -20,8 +18,8 @@ public class GamesViewPager extends Fragment{
 
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getFragmentManager());
-        viewPagerAdapter.AddItem("Noticias",new GeneralNews());
-        viewPagerAdapter.AddItem("Top Players",new TopPlayers());
+        viewPagerAdapter.AddItem("Noticias",new GeneralNewsFragment());
+        viewPagerAdapter.AddItem("Top Players",new TopPlayersFragment());
         viewPagerAdapter.AddItem("Imagenes",new ImagesFragment());
 
 

@@ -12,8 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.rodrigorov.cometela.parcial2.Fragments.GeneralNews;
-import com.rodrigorov.cometela.parcial2.Fragments.GamesViewPager;
+import com.rodrigorov.cometela.parcial2.Fragments.GeneralNewsFragment;
+import com.rodrigorov.cometela.parcial2.Fragments.GamesViewPagerFragment;
 import com.rodrigorov.cometela.parcial2.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_games) {
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.contentFrame,new GamesViewPager());
+                    fragmentTransaction.replace(R.id.contentFrame,new GamesViewPagerFragment());
                     fragmentTransaction.commit();
                 } else if (id == R.id.nav_settings) {
 
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     void setGeneralNews(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.contentFrame,new GeneralNews());
+        fragmentTransaction.replace(R.id.contentFrame,new GeneralNewsFragment());
         fragmentTransaction.commit();
     }
 }

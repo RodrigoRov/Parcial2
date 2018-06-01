@@ -15,7 +15,7 @@ import com.rodrigorov.cometela.parcial2.R;
 
 import java.util.ArrayList;
 
-public class TopPlayers extends Fragment{
+public class TopPlayersFragment extends Fragment{
 
     @Nullable
     @Override
