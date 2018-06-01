@@ -1,12 +1,8 @@
 package com.rodrigorov.cometela.parcial2.Activities;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.rodrigorov.cometela.parcial2.Fragments.GeneralNews;
+import com.rodrigorov.cometela.parcial2.Fragments.GamesViewPager;
 import com.rodrigorov.cometela.parcial2.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,9 +44,12 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.nav_general_news) {
-                    // Handle the camera action
-                } else if (id == R.id.nav_gallery) {
 
+                } else if (id == R.id.nav_gallery) {
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.contentFrame,new GamesViewPager());
+                    fragmentTransaction.commit();
                 } else if (id == R.id.nav_slideshow) {
 
                 } else if (id == R.id.nav_manage) {

@@ -7,12 +7,13 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_general_news"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:icon="@drawable/ic_public_black_24dp"
+            android:title="General News" />
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Gallery" />
+
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"
