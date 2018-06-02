@@ -1,6 +1,7 @@
 package com.rodrigorov.cometela.parcial2.Activities;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.rodrigorov.cometela.parcial2.Fragments.FavoritosFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GeneralNewsFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GamesViewPagerFragment;
 import com.rodrigorov.cometela.parcial2.R;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        setGeneralNews();
+        setFragment(new GeneralNewsFragment());
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -41,17 +43,14 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.nav_general_news) {
-                    setGeneralNews();
+                    setFragment(new GeneralNewsFragment());
 
                 } else if (id == R.id.nav_games) {
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.contentFrame,new GamesViewPagerFragment());
-                    fragmentTransaction.commit();
+                    setFragment(new GamesViewPagerFragment());
                 } else if (id == R.id.nav_settings) {
 
                 } else if (id == R.id.nav_favs) {
-
+                    setFragment(new FavoritosFragment());
                 }
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -93,10 +92,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void setGeneralNews(){
+    void setFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.contentFrame,new GeneralNewsFragment());
+        fragmentTransaction.replace(R.id.contentFrame,fragment);
         fragmentTransaction.commit();
     }
 }
