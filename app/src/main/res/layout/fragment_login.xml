@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerVertical="true">
+
+    <TextView
+        android:id="@+id/fragment_login_logintxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:text="@string/login"
+        android:textColor="#000"
+        android:textSize="24sp"
+        />
+    <TextView
+        android:id="@+id/fragment_login_usernametxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/fragment_login_logintxt"
+        android:layout_marginTop="24dp"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:layout_toStartOf="@id/fragment_login_logintxt"
+        android:text="@string/username" />
+
+    <EditText
+        android:id="@+id/fragment_login_username"
+        android:inputType="text"
+        android:layout_width="130dp"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@id/fragment_login_usernametxt"
+        android:layout_alignBaseline="@id/fragment_login_usernametxt"
+        android:gravity="center"
+        android:hint="Rodrigo"
+        android:maxWidth="130dp"/>
+
+    <TextView
+        android:id="@+id/fragment_login_passtxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/password"
+        android:layout_alignStart="@id/fragment_login_usernametxt"
+        android:layout_marginTop="24dp"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:layout_below="@id/fragment_login_usernametxt"
+        />
+    <EditText
+        android:id="@+id/fragment_login_password"
+        android:inputType="textPassword"
+        android:layout_centerInParent="true"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/fragment_login_passtxt"
+        android:layout_marginStart="16dp"
+        android:layout_alignBaseline="@id/fragment_login_passtxt"
+        android:maxWidth="130dp"/>
+    <Button
+        android:id="@+id/fragment_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fragment_login_password"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="@string/login"
+        android:background="@drawable/my_button"
+        />
+
+</RelativeLayout>

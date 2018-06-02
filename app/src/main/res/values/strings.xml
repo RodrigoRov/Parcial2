@@ -13,4 +13,8 @@
     <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="cancel">Cancelar</string>
+    <string name="login">Log in</string>
+    <string name="username">Username:</string>
+    <string name="password">Password:</string>
+    <string name="confirm_password">Confirm Password:</string>
 </resources>

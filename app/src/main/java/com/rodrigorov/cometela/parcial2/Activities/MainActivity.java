@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.rodrigorov.cometela.parcial2.Fragments.FavoritosFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GeneralNewsFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GamesViewPagerFragment;
+import com.rodrigorov.cometela.parcial2.Fragments.LoginFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.SettingsFragment;
 import com.rodrigorov.cometela.parcial2.R;
 
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        setFragment(new GeneralNewsFragment());
+        setFragment(new LoginFragment());
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {

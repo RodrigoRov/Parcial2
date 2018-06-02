@@ -17,7 +17,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
         <TextView
-            android:text="Username: "
+            android:text="@string/username"
             android:textSize="16sp"
             android:textColor="#000"
             android:layout_width="0dp"
@@ -44,7 +44,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
             <TextView
-                android:text="Password: "
+                android:text="@string/password"
                 android:textSize="16sp"
                 android:textColor="#000"
                 android:layout_gravity="center"
@@ -72,7 +72,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
             <TextView
-                android:text="Confirm Password: "
+                android:text="@string/confirm_password"
                 android:textSize="16sp"
                 android:textColor="#000"
                 android:gravity="center"
