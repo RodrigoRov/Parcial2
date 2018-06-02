@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.rodrigorov.cometela.parcial2.Fragments.FavoritosFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GeneralNewsFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GamesViewPagerFragment;
+import com.rodrigorov.cometela.parcial2.Fragments.SettingsFragment;
 import com.rodrigorov.cometela.parcial2.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_games) {
                     setFragment(new GamesViewPagerFragment());
                 } else if (id == R.id.nav_settings) {
-
+                    setFragment(new SettingsFragment());
                 } else if (id == R.id.nav_favs) {
                     setFragment(new FavoritosFragment());
                 }

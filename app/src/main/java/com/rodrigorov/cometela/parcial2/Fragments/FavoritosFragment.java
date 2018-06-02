@@ -18,7 +18,7 @@ public class FavoritosFragment  extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragments_favoritos,container,false);
 
-        RecyclerView recyclerView = v.findViewById(R.id.fragment_favoritos);
+        RecyclerView recyclerView = v.findViewById(R.id.fragment_favoritos_recycler_view);
         return v;
     }
 }
