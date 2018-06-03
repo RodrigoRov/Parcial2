@@ -39,8 +39,8 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Noticia noticia = noticias.get(position);
 
-        new DownloadImageTask(holder.imageView).execute(noticia.getImagen());
-        holder.textView.setText(noticia.getNombre());
+        new DownloadImageTask(holder.imageView).execute(noticia.getCoverImage());
+        holder.textView.setText(noticia.getTitle());
     }
 
     @Override

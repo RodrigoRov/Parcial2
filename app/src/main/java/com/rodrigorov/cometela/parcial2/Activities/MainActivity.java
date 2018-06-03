@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (id == R.id.nav_general_news) {
                     setFragment(new GeneralNewsFragment());
-
                 } else if (id == R.id.nav_games) {
                     setFragment(new GamesViewPagerFragment());
                 } else if (id == R.id.nav_settings) {
