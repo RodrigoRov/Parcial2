@@ -9,7 +9,7 @@ import com.rodrigorov.cometela.parcial2.Models.Noticia;
 
 import java.lang.reflect.Type;
 
-public class ApiDeserializer implements JsonDeserializer<Noticia>{
+public class NoticiaDeserializer implements JsonDeserializer<Noticia>{
     @Override
     public Noticia deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         Noticia noticia = new Noticia();

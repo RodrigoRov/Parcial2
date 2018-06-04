@@ -2,6 +2,7 @@ package com.rodrigorov.cometela.parcial2.Models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "noticia_table")
@@ -33,6 +34,9 @@ public class Noticia {
         this.title = title;
         this.coverImage = imagen;
     }
+
+    public Noticia(){}
+
 
     public String getTitle() {
         return title;

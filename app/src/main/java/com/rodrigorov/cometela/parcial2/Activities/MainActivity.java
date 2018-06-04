@@ -35,7 +35,9 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        setFragment(new LoginFragment());
+        LoginFragment loginFragment = new LoginFragment();
+        loginFragment.setApplication(getApplication());
+        setFragment(loginFragment);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
