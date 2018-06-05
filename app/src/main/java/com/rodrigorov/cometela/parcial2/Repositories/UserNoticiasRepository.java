@@ -9,12 +9,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rodrigorov.cometela.parcial2.Api.GameNewsApi;
 import com.rodrigorov.cometela.parcial2.Api.NoticiaDeserializer;
+import com.rodrigorov.cometela.parcial2.Api.TokenDeserializer;
 import com.rodrigorov.cometela.parcial2.Api.UserDeserializer;
 import com.rodrigorov.cometela.parcial2.Database.Daos.NoticiaDao;
 import com.rodrigorov.cometela.parcial2.Database.Daos.UserDao;
 import com.rodrigorov.cometela.parcial2.Database.NoticiasDatabase;
 import com.rodrigorov.cometela.parcial2.Models.Login;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
+import com.rodrigorov.cometela.parcial2.Models.Token;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
 import java.io.IOException;
@@ -46,6 +48,8 @@ public class UserNoticiasRepository {
     private LiveData<List<Noticia>> AllNoticias;
     private GameNewsApi gameNewsApi;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private String token;
+    private List<Noticia> Noticias;
 
     public UserNoticiasRepository(Application application){
         NoticiasDatabase db = NoticiasDatabase.getDatabase(application);
@@ -61,9 +65,9 @@ public class UserNoticiasRepository {
     }
 
     public LiveData<List<Noticia>> getAllNoticias() {
-        compositeDisposable.add(gameNewsApi.getNoticias().subscribeOn(Schedulers.io())
+        /*compositeDisposable.add(gameNewsApi.getNoticias("Bearer "+login("00357215","00357215")).subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(getRepositoriesObserver()));
+        .subscribeWith(getRepositoriesObserver()));*/
 
         return AllNoticias;
     }
@@ -111,6 +115,7 @@ public class UserNoticiasRepository {
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                 .registerTypeAdapter(Noticia.class, new NoticiaDeserializer())
                 .registerTypeAdapter(User.class,new UserDeserializer())
+                .registerTypeAdapter(Token.class,new TokenDeserializer())
                 .create();
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -159,31 +164,50 @@ public class UserNoticiasRepository {
         };
     }
 
-    public void login(){
-        Call<ResponseBody> call = gameNewsApi.iniciarSesion("user=00058016&password=00058016");
-        call.enqueue(new Callback<ResponseBody>(){
+    public String login(String user,String password){
+        Call<Token> call = gameNewsApi.iniciarSesion(user,password);
+        call.enqueue(new Callback<Token>(){
             @Override
-            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+            public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
                 if(response.isSuccessful()){
-                    try {
-                        Log.d("Token",response.body().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    Log.d("Token",response.body().getToken());
+                    token = response.body().getToken();
                 }
-                else
+                else{
                     Log.d("No pudo","obtener token");
+                }
+
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("tipo", Objects.requireNonNull(call.request().body()).toString());
+            public void onFailure(Call<Token> call, Throwable t) {
                 Log.d("Error",t.getMessage());
                 Log.d("Error","error");
         }
         });
+        return token;
     }
 
+    public List<Noticia> getNoticias(String token) {
+        Log.d("token UNR",token);
+        Call<List<Noticia>> call = gameNewsApi.getNoticiasNOOB("Bearer "+ token);
+        call.enqueue(new Callback<List<Noticia>>() {
+            @Override
+            public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
+                if(response.isSuccessful()){
+                    Noticias = response.body();
+                }
+                else{
+                    Log.d("Response ",response.message());
+                    Log.d("Error","no succesful");
+                }
+            }
 
-
+            @Override
+            public void onFailure(Call<List<Noticia>> call, Throwable t) {
+                Log.d("Error",t.getMessage());
+            }
+        });
+        return Noticias;
+    }
 }

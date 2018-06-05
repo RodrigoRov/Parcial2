@@ -2,6 +2,7 @@ package com.rodrigorov.cometela.parcial2.Api;
 
 import com.rodrigorov.cometela.parcial2.Models.Login;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
+import com.rodrigorov.cometela.parcial2.Models.Token;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
 import java.util.List;
@@ -10,6 +11,8 @@ import io.reactivex.Single;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -22,7 +25,7 @@ public interface GameNewsApi {
     String ENDPOINT = "http://gamenewsuca.herokuapp.com";
 
     @GET("/news")
-    Single<List<Noticia>> getNoticias();
+    Single<List<Noticia>> getNoticias(@Header("Authorization") String codigo);
 
     @GET("/users")
     Single<List<User>> getUsers();
@@ -30,9 +33,12 @@ public interface GameNewsApi {
     @POST
     Single<ResponseBody> agregarUsuario(@Url String url, @Body User user);
 
-    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
     @POST("/login")
-    Call<ResponseBody> iniciarSesion(@Body String data);
+    Call<Token> iniciarSesion(@Field("user") String string, @Field("password") String pass);
+
+    @GET("/news")
+    Call<List<Noticia>> getNoticiasNOOB(@Header("Authorization") String codigo);
 
 
 

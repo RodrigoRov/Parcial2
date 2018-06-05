@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class GeneralNewsFragment extends Fragment {
     GridLayoutManager mLayoutManager;
     RecyclerView recyclerView;
     UserViewModel userViewModel;
+    private String token;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,7 +35,7 @@ public class GeneralNewsFragment extends Fragment {
 
 
         recyclerView = v.findViewById(R.id.generalnews_fragment_recyclerview);
-        List<Noticia> noticias = new ArrayList<Noticia>();
+        List<Noticia> noticias;
         //fillList(noticias);
 
 
@@ -47,13 +49,18 @@ public class GeneralNewsFragment extends Fragment {
 
         recyclerView.setLayoutManager(mLayoutManager);
 
-        userViewModel.getAllnoticias().observe(this, new Observer<List<Noticia>>() {
+
+        Log.d("Token GNF:",token);
+        userViewModel.getNoticias(token);
+        /*GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext(),noticias);
+        recyclerView.setAdapter(adapter);*/
+        /*userViewModel.getAllnoticias().observe(this, new Observer<List<Noticia>>() {
             @Override
             public void onChanged(@Nullable List<Noticia> noticias) {
                 GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext(),noticias);
                 recyclerView.setAdapter(adapter);
             }
-        });
+        });*/
 
         return v;
     }
@@ -65,5 +72,7 @@ public class GeneralNewsFragment extends Fragment {
         noticias.add(new Noticia("Irelia bb :3","https://images.google.com.sv/imgres?imgurl=https%3A%2F%2Fvignette.wikia.nocookie.net%2Fleagueoflegends%2Fimages%2F0%2F0f%2FJhin_OriginalCentered.jpg%2Frevision%2Flatest%2Fscale-to-width-down%2F1215%3Fcb%3D20180414203247&imgrefurl=http%3A%2F%2Fleagueoflegends.wikia.com%2Fwiki%2FJhin&docid=7QAnSIddwVmNTM&tbnid=cZlPjdRaHZz20M%3A&vet=1&w=1215&h=683&source=sh%2Fx%2Fim"));
     }*/
 
-
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.User;
@@ -16,6 +17,7 @@ public class UserViewModel extends AndroidViewModel{
     private UserNoticiasRepository userRepository;
     private LiveData<List<User>> Allusers;
     private LiveData<List<Noticia>> Allnoticias;
+    private List<Noticia> noticias;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -34,6 +36,8 @@ public class UserViewModel extends AndroidViewModel{
 
     public void insert(User user){ userRepository.insertU(user);}
 
-
-
+    public List<Noticia> getNoticias(String token) {
+        Log.d("Token UVM",token);
+        return userRepository.getNoticias(token);
+    }
 }
