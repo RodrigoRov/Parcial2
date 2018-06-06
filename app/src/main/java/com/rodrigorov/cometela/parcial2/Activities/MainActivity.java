@@ -58,11 +58,12 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 // Handle navigation view item clicks here.
                 int id = item.getItemId();
+                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                String token = sharedPref.getString("TOKEN","");
+                Log.d("token SPREF",token);
 
                 if (id == R.id.nav_general_news) {
                     GeneralNewsFragment fragment = new GeneralNewsFragment();
-                    Log.d("TOKEN TEMP",temp);
-                    fragment.setToken(temp);
                     setFragment(fragment);
                 } else if (id == R.id.nav_games) {
                     setFragment(new GamesViewPagerFragment());
@@ -123,7 +124,10 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == 1 && resultCode ==1){
             token = data.getStringExtra("token");
             Log.d("Token MA",token);
-
+            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("TOKEN",token);
+            editor.commit();
         }
     }
 }

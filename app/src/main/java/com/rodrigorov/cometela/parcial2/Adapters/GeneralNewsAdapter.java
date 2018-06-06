@@ -87,6 +87,7 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     }
 
     public void setNoticias(List<Noticia> noticias) {
+        Log.d("Entra","Al set");
         this.noticias = noticias;
         notifyDataSetChanged();
     }

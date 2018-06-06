@@ -2,6 +2,8 @@ package com.rodrigorov.cometela.parcial2.Fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +22,7 @@ import com.rodrigorov.cometela.parcial2.ViewModel.UserViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GeneralNewsFragment extends Fragment {
     GridLayoutManager mLayoutManager;
@@ -32,7 +35,10 @@ public class GeneralNewsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_generalnews,container,false);
 
 
-        Log.d("GNF TOKEN",token);
+        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        String token = sharedPref.getString("TOKEN","");
+        Log.d("TOKEN SPFRS",token);
+
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
 
@@ -56,6 +62,7 @@ public class GeneralNewsFragment extends Fragment {
         userViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
             @Override
             public void onChanged(@Nullable List<Noticia> noticias) {
+                Log.d("Entra","On changed");
                 adapter.setNoticias(noticias);
             }
         });

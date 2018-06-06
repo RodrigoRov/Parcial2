@@ -82,20 +82,17 @@ public class UserNoticiasRepository {
                     //noticiaDao.insert(Noticias.toArray(new Noticia[Noticias.size()]));
                 }
                 else{
-                    Log.d("Response ",response.message());
                     Log.d("Error","no succesful");
                 }
             }
             @Override
             public void onFailure(Call<List<Noticia>> call, Throwable t) {
                 Log.d("Error",t.getMessage());
+                Log.d("ON Failure","UNR");
             }
         });
-        /*compositeDisposable.add(gameNewsApi.getNoticias("Bearer "+login("00357215","00357215")).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(getRepositoriesObserver()));*/
 
-        return AllNoticias;
+        return data;
     }
     public LiveData<List<Noticia>> getAllNoticias() {
         return AllNoticias;

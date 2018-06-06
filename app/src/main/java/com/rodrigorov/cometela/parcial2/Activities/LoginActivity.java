@@ -55,11 +55,6 @@ public class LoginActivity extends AppCompatActivity{
                 userViewModel.getToken().observe(appCompatActivity, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
-                        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("TOKEN",s);
-                        editor.commit();
-
                         Intent returnIntent = new Intent();
                         returnIntent.putExtra("token",s);
                         setResult(1,returnIntent);
