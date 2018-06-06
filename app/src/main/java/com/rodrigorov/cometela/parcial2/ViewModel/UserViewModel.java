@@ -35,8 +35,8 @@ public class UserViewModel extends AndroidViewModel{
         return Allusers;
     }
 
-    public LiveData<List<Noticia>> getAllnoticias() {
-        return userRepository.getAllNoticias(getToken().getValue());
+    public LiveData<List<Noticia>> getAllnoticias(String token) {
+        return userRepository.getAllNoticias(token);
     }
 
     public void insert(User user){ userRepository.insertU(user);}

@@ -23,9 +23,8 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     Context context;
     List<Noticia> noticias;
 
-    public GeneralNewsAdapter(Context context,List<Noticia> noticias){
+    public GeneralNewsAdapter(Context context){
         this.context = context;
-        this.noticias = noticias;
     }
 
     @NonNull
@@ -45,7 +44,10 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
 
     @Override
     public int getItemCount() {
-        return noticias.size();
+        if (noticias != null)
+            return noticias.size();
+        else
+            return 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -82,5 +84,10 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
+    }
+
+    public void setNoticias(List<Noticia> noticias) {
+        this.noticias = noticias;
+        notifyDataSetChanged();
     }
 }

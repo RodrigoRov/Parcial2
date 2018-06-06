@@ -31,12 +31,15 @@ public class GeneralNewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generalnews,container,false);
 
+
+        Log.d("GNF TOKEN",token);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
 
+
+        final GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext());
+
         recyclerView = v.findViewById(R.id.generalnews_fragment_recyclerview);
-        List<Noticia> noticias;
-        //fillList(noticias);
 
 
         mLayoutManager = new GridLayoutManager(getActivity(), 2);
@@ -47,11 +50,17 @@ public class GeneralNewsFragment extends Fragment {
             }
         });
 
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(mLayoutManager);
 
+        userViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
+            @Override
+            public void onChanged(@Nullable List<Noticia> noticias) {
+                adapter.setNoticias(noticias);
+            }
+        });
 
-        Log.d("Token GNF:",token);
-        userViewModel.getNoticias(token);
+
         /*GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext(),noticias);
         recyclerView.setAdapter(adapter);*/
         /*userViewModel.getAllnoticias().observe(this, new Observer<List<Noticia>>() {
@@ -64,13 +73,6 @@ public class GeneralNewsFragment extends Fragment {
 
         return v;
     }
-
-    /*void fillList(List<Noticia> noticias){
-        noticias.add(new Noticia("Zed MasterBaiter","https://java.sogeti.nl/JavaBlog/wp-content/uploads/2009/04/android_icon_256.png"));
-        noticias.add(new Noticia("Zoe bb","https://images.google.com.sv/imgres?imgurl=https%3A%2F%2Fvignette.wikia.nocookie.net%2Fleagueoflegends%2Fimages%2Fe%2Fe0%2FZoe_OriginalCentered.jpg%2Frevision%2Flatest%2Fscale-to-width-down%2F1215%3Fcb%3D20180414203803&imgrefurl=http%3A%2F%2Fleagueoflegends.wikia.com%2Fwiki%2FZoe&docid=NUr1bO66W9l0RM&tbnid=VP8_yhqK1OikVM%3A&vet=1&w=1215&h=683&source=sh%2Fx%2Fim"));
-        noticias.add(new Noticia("Jhin en 4","https://images.google.com.sv/imgres?imgurl=https%3A%2F%2Fvignette.wikia.nocookie.net%2Fleagueoflegends%2Fimages%2F0%2F0f%2FJhin_OriginalCentered.jpg%2Frevision%2Flatest%2Fscale-to-width-down%2F1215%3Fcb%3D20180414203247&imgrefurl=http%3A%2F%2Fleagueoflegends.wikia.com%2Fwiki%2FJhin&docid=7QAnSIddwVmNTM&tbnid=cZlPjdRaHZz20M%3A&vet=1&w=1215&h=683&source=sh%2Fx%2Fim"));
-        noticias.add(new Noticia("Irelia bb :3","https://images.google.com.sv/imgres?imgurl=https%3A%2F%2Fvignette.wikia.nocookie.net%2Fleagueoflegends%2Fimages%2F0%2F0f%2FJhin_OriginalCentered.jpg%2Frevision%2Flatest%2Fscale-to-width-down%2F1215%3Fcb%3D20180414203247&imgrefurl=http%3A%2F%2Fleagueoflegends.wikia.com%2Fwiki%2FJhin&docid=7QAnSIddwVmNTM&tbnid=cZlPjdRaHZz20M%3A&vet=1&w=1215&h=683&source=sh%2Fx%2Fim"));
-    }*/
 
     public void setToken(String token) {
         this.token = token;

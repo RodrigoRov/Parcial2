@@ -20,11 +20,12 @@ import android.view.MenuItem;
 import com.rodrigorov.cometela.parcial2.Fragments.FavoritosFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GeneralNewsFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GamesViewPagerFragment;
-import com.rodrigorov.cometela.parcial2.Fragments.LoginFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.SettingsFragment;
 import com.rodrigorov.cometela.parcial2.R;
 
 public class MainActivity extends AppCompatActivity {
+
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        final String temp = new String(token);
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -57,7 +60,10 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.nav_general_news) {
-                    setFragment(new GeneralNewsFragment());
+                    GeneralNewsFragment fragment = new GeneralNewsFragment();
+                    Log.d("TOKEN TEMP",temp);
+                    fragment.setToken(temp);
+                    setFragment(fragment);
                 } else if (id == R.id.nav_games) {
                     setFragment(new GamesViewPagerFragment());
                 } else if (id == R.id.nav_settings) {
@@ -110,5 +116,14 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.contentFrame,fragment);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 1 && resultCode ==1){
+            token = data.getStringExtra("token");
+            Log.d("Token MA",token);
+
+        }
     }
 }
