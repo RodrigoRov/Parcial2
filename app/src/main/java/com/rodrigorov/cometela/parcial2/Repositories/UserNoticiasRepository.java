@@ -2,6 +2,7 @@ package com.rodrigorov.cometela.parcial2.Repositories;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -22,8 +23,12 @@ import com.rodrigorov.cometela.parcial2.Models.User;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+
+import javax.inject.Singleton;
 
 import io.reactivex.Scheduler;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -40,15 +45,15 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+@Singleton
 public class UserNoticiasRepository {
 
-    private NoticiaDao noticiaDao;
-    private UserDao userDao;
+    private final NoticiaDao noticiaDao;
+    private final UserDao userDao;
     private LiveData<List<User>> AllUsers;
     private LiveData<List<Noticia>> AllNoticias;
     private GameNewsApi gameNewsApi;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private String token;
     private List<Noticia> Noticias;
 
     public UserNoticiasRepository(Application application){
@@ -64,11 +69,35 @@ public class UserNoticiasRepository {
         return AllUsers;
     }
 
-    public LiveData<List<Noticia>> getAllNoticias() {
+    public LiveData<List<Noticia>> getAllNoticias(String token) {
+        Log.d("token UNR",token);
+        Call<List<Noticia>> call = gameNewsApi.getNoticias("Bearer "+ token);
+        final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
+        call.enqueue(new Callback<List<Noticia>>() {
+            @Override
+            public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
+                if(response.isSuccessful()){
+                    data.setValue(response.body());
+                    AllNoticias = data;
+                    //noticiaDao.insert(Noticias.toArray(new Noticia[Noticias.size()]));
+                }
+                else{
+                    Log.d("Response ",response.message());
+                    Log.d("Error","no succesful");
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Noticia>> call, Throwable t) {
+                Log.d("Error",t.getMessage());
+            }
+        });
         /*compositeDisposable.add(gameNewsApi.getNoticias("Bearer "+login("00357215","00357215")).subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(getRepositoriesObserver()));*/
 
+        return AllNoticias;
+    }
+    public LiveData<List<Noticia>> getAllNoticias() {
         return AllNoticias;
     }
 
@@ -164,14 +193,15 @@ public class UserNoticiasRepository {
         };
     }
 
-    public String login(String user,String password){
+    public LiveData<String> login(String user,String password){
+        final MutableLiveData<String> token = new MutableLiveData<>();
         Call<Token> call = gameNewsApi.iniciarSesion(user,password);
         call.enqueue(new Callback<Token>(){
             @Override
             public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
                 if(response.isSuccessful()){
                     Log.d("Token",response.body().getToken());
-                    token = response.body().getToken();
+                    token.setValue(response.body().getToken());
                 }
                 else{
                     Log.d("No pudo","obtener token");

@@ -14,11 +14,13 @@ import java.util.List;
 public interface NoticiaDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Noticia noticia);
+    void insert(Noticia... noticias);
 
     @Query("DELETE FROM noticia_table")
     void deleteAll();
 
     @Query("SELECT * FROM noticia_table")
     LiveData<List<Noticia>> getAllNoticias();
+
+
 }

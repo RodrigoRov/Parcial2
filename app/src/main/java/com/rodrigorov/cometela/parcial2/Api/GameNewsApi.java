@@ -25,7 +25,7 @@ public interface GameNewsApi {
     String ENDPOINT = "http://gamenewsuca.herokuapp.com";
 
     @GET("/news")
-    Single<List<Noticia>> getNoticias(@Header("Authorization") String codigo);
+    Call<List<Noticia>> getNoticias(@Header("Authorization") String codigo);
 
     @GET("/users")
     Single<List<User>> getUsers();
