@@ -1,10 +1,14 @@
 package com.rodrigorov.cometela.parcial2.Api;
 
+import android.util.Log;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
 import java.lang.reflect.Type;
@@ -21,9 +25,18 @@ public class UserDeserializer implements JsonDeserializer<User> {
         user.setUser(UserjsonObject.get("user").getAsString());
         user.setPassword(UserjsonObject.get("password").getAsString());
 
-        JsonElement NotiJsonElement = UserjsonObject.getAsJsonObject("favoriteNews");
+        JsonArray favoriteNews = UserjsonObject.getAsJsonArray("favoriteNews");
+        StringBuilder sb = new StringBuilder();
 
-
-        return null;
+        for(int i = 0;i<favoriteNews.size();i++){
+            if (i==favoriteNews.size()-1){
+                sb.append(favoriteNews.get(i).getAsJsonObject().get("_id").getAsString());
+            }
+            sb.append(favoriteNews.get(i).getAsJsonObject().get("_id").getAsString());
+            sb.append(",");
+        }
+        user.setFavoriteNews(sb.toString());
+        Log.d("Favs",sb.toString());
+        return user;
     }
 }

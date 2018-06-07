@@ -20,6 +20,7 @@ public class UserViewModel extends AndroidViewModel{
     private LiveData<List<Noticia>> Allnoticias;
     private List<Noticia> noticias;
     private LiveData<String> token;
+    private LiveData<User> user;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -41,11 +42,6 @@ public class UserViewModel extends AndroidViewModel{
 
     public void insert(User user){ userRepository.insertU(user);}
 
-    public List<Noticia> getNoticias(String token) {
-        Log.d("Token UVM",token);
-        return userRepository.getNoticias(token);
-    }
-
     public void initToken(String user,String password){
         if (this.token != null) {
             // ViewModel is created per Fragment so
@@ -57,5 +53,9 @@ public class UserViewModel extends AndroidViewModel{
 
     public LiveData<String> getToken() {
         return token;
+    }
+
+    public LiveData<User> getUser(String token) {
+        return userRepository.getUserDetail(token);
     }
 }

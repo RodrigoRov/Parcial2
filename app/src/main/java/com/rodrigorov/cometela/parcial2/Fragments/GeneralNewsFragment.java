@@ -28,7 +28,6 @@ public class GeneralNewsFragment extends Fragment {
     GridLayoutManager mLayoutManager;
     RecyclerView recyclerView;
     UserViewModel userViewModel;
-    private String token;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,21 +66,6 @@ public class GeneralNewsFragment extends Fragment {
             }
         });
 
-
-        /*GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext(),noticias);
-        recyclerView.setAdapter(adapter);*/
-        /*userViewModel.getAllnoticias().observe(this, new Observer<List<Noticia>>() {
-            @Override
-            public void onChanged(@Nullable List<Noticia> noticias) {
-                GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext(),noticias);
-                recyclerView.setAdapter(adapter);
-            }
-        });*/
-
         return v;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 }

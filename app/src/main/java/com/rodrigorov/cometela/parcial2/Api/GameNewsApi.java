@@ -18,6 +18,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Path;
 import retrofit2.http.Url;
 
 public interface GameNewsApi {
@@ -37,8 +38,16 @@ public interface GameNewsApi {
     @POST("/login")
     Call<Token> iniciarSesion(@Field("user") String string, @Field("password") String pass);
 
-    @GET("/news")
-    Call<List<Noticia>> getNoticiasNOOB(@Header("Authorization") String codigo);
+    @FormUrlEncoded
+    @PUT("/users/{idUser}")
+    Call<User> modifyUser(@Path("idUser") String idUser);
+
+    /*@GET("/users/{idUser}")
+    Call<User> getActiveUser(@Path("idUser") String idUser);
+*/
+
+    @GET("/users/detail")
+    Call<User> getActiveUser(@Header("Authorization") String codigo);
 
 
 

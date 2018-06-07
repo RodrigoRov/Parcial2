@@ -215,26 +215,32 @@ public class UserNoticiasRepository {
         return token;
     }
 
-    public List<Noticia> getNoticias(String token) {
-        Log.d("token UNR",token);
-        Call<List<Noticia>> call = gameNewsApi.getNoticiasNOOB("Bearer "+ token);
-        call.enqueue(new Callback<List<Noticia>>() {
+    /*public LiveData<User> getUserData(){
+
+    }*/
+    public LiveData<User> getUserDetail(String token){
+        final MutableLiveData<User> data = new MutableLiveData<>();
+        final User user = new User();
+        Call<User> call = gameNewsApi.getActiveUser("Bearer "+token);
+
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
-                if(response.isSuccessful()){
-                    Noticias = response.body();
-                }
-                else{
-                    Log.d("Response ",response.message());
-                    Log.d("Error","no succesful");
-                }
+            public void onResponse(Call<User> call, retrofit2.Response<User> response) {
+                user.setUser(response.body().getUser());
+                user.setId(response.body().getId());
+                Log.d("User Id",response.body().getId());
+                user.setPassword(response.body().getPassword());
+                user.setFavoriteNews(response.body().getFavoriteNews());
+                data.setValue(user);
             }
 
             @Override
-            public void onFailure(Call<List<Noticia>> call, Throwable t) {
-                Log.d("Error",t.getMessage());
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d("Failure",t.getMessage());
+                Log.d("call",call.request().toString());
             }
         });
-        return Noticias;
+        return data;
     }
+
 }
