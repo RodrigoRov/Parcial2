@@ -12,19 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.R;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder>{
 
     Context context;
-    ArrayList<String> imagenes;
+    List<Noticia> noticias;
 
-    public ImagesAdapter(Context context, ArrayList<String> imagenes){
+    public ImagesAdapter(Context context, List<Noticia> noticias){
         this.context = context;
-        this.imagenes = imagenes;
+        this.noticias = noticias;
     }
 
     @NonNull
@@ -36,12 +38,12 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ImagesAdapter.ViewHolder holder, int position) {
-        new DownloadImageTask(holder.imagen).execute(imagenes.get(position));
+        new DownloadImageTask(holder.imagen).execute(noticias.get(position).getCoverImage());
     }
 
     @Override
     public int getItemCount() {
-        return imagenes.size();
+        return noticias.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{

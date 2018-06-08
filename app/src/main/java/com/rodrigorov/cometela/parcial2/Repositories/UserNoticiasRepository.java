@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.rodrigorov.cometela.parcial2.Api.FavsResponseDeserializer;
 import com.rodrigorov.cometela.parcial2.Api.GameNewsApi;
 import com.rodrigorov.cometela.parcial2.Api.NoticiaDeserializer;
 import com.rodrigorov.cometela.parcial2.Api.TokenDeserializer;
@@ -15,6 +16,7 @@ import com.rodrigorov.cometela.parcial2.Api.UserDeserializer;
 import com.rodrigorov.cometela.parcial2.Database.Daos.NoticiaDao;
 import com.rodrigorov.cometela.parcial2.Database.Daos.UserDao;
 import com.rodrigorov.cometela.parcial2.Database.NoticiasDatabase;
+import com.rodrigorov.cometela.parcial2.Models.FavsResponse;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.Token;
 import com.rodrigorov.cometela.parcial2.Models.User;
@@ -41,8 +43,6 @@ public class UserNoticiasRepository {
 
     private final NoticiaDao noticiaDao;
     private final UserDao userDao;
-    private LiveData<List<User>> AllUsers;
-    private LiveData<List<Noticia>> AllNoticias;
     private GameNewsApi gameNewsApi;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private List<Noticia> Noticias;
@@ -51,53 +51,113 @@ public class UserNoticiasRepository {
         NoticiasDatabase db = NoticiasDatabase.getDatabase(application);
         userDao = db.userDao();
         noticiaDao = db.noticiaDao();
-        AllUsers = userDao.getAllUsers();
         createAPI();
     }
 
-    public LiveData<List<User>> getAllUsers() {
-        return AllUsers;
+    /*
+    *
+    *
+    *
+    *CREANDO API CON RETROFIT Y GSON
+    *
+    *
+    *
+     */
+
+    private void createAPI(){
+        Gson gson =  new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+                .registerTypeAdapter(Noticia.class, new NoticiaDeserializer())
+                .registerTypeAdapter(User.class,new UserDeserializer())
+                .registerTypeAdapter(Token.class,new TokenDeserializer())
+                .registerTypeAdapter(FavsResponse.class,new FavsResponseDeserializer())
+                .create();
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request originalRequest = chain.request();
+
+                        Request.Builder builder = originalRequest.newBuilder().header("Authorization",
+                                Credentials.basic("00357215","00357215"));
+
+                        Request newRequest = builder.build();
+                        return chain.proceed(newRequest);
+                    }
+                }).build();
+
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GameNewsApi.ENDPOINT)
+                /*.client(okHttpClient)*/
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        gameNewsApi = retrofit.create(GameNewsApi.class);
+
     }
 
-    public LiveData<List<Noticia>> getAllNoticias(String token) {
-        Log.d("token UNR",token);
-        Call<List<Noticia>> call = gameNewsApi.getNoticias("Bearer "+ token);
-        final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
-        call.enqueue(new Callback<List<Noticia>>() {
+    /*
+    **
+    **
+    **
+    USER ACCESS
+    **
+    **
+    **
+     */
+
+    public LiveData<String> login(String user,String password){
+        final MutableLiveData<String> token = new MutableLiveData<>();
+        Call<Token> call = gameNewsApi.iniciarSesion(user,password);
+        call.enqueue(new Callback<Token>(){
             @Override
-            public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
+            public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
                 if(response.isSuccessful()){
-                    data.setValue(response.body());
-                    if (response.body() != null) {
-                        new insertNAsyncTask(noticiaDao).execute(response.body().toArray(new Noticia[response.body().size()]));
-                    }
-                    //noticiaDao.insert(Noticias.toArray(new Noticia[Noticias.size()]));
+                    Log.d("Token",response.body().getToken());
+                    token.setValue(response.body().getToken());
                 }
                 else{
-                    Log.d("Error","no succesful");
+                    Log.d("No pudo","obtener token");
                 }
+
             }
             @Override
-            public void onFailure(Call<List<Noticia>> call, Throwable t) {
+            public void onFailure(Call<Token> call, Throwable t) {
                 Log.d("Error",t.getMessage());
-                new getAllNoticiasDAO(noticiaDao,data).execute();
-                Log.d("ON Failure","UNR");
+                Log.d("Error","error");
+        }
+        });
+        return token;
+    }
+
+    public LiveData<User> getUserDetail(String token){
+        final MutableLiveData<User> data = new MutableLiveData<>();
+        final User user = new User();
+        Call<User> call = gameNewsApi.getActiveUser("Bearer "+token);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, retrofit2.Response<User> response) {
+                user.setUser(response.body().getUser());
+                user.setId(response.body().getId());
+                Log.d("User Id",response.body().getId());
+                user.setPassword(response.body().getPassword());
+                user.setFavoriteNews(response.body().getFavoriteNews());
+                data.setValue(user);
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d("Failure",t.getMessage());
+                Log.d("call",call.request().toString());
             }
         });
-
         return data;
     }
-    public LiveData<List<Noticia>> getAllNoticias() {
-        return AllNoticias;
-    }
 
-    public void insertU(User user){
-        new insertUAsyncTask(userDao).execute(user);
-    }
-
-    public void insertN(Noticia noticia){
-
-    }
 
     private static class insertUAsyncTask extends AsyncTask<User,Void,Void>{
 
@@ -113,6 +173,17 @@ public class UserNoticiasRepository {
             return null;
         }
     }
+    public void insertU(User user){
+        new insertUAsyncTask(userDao).execute(user);
+    }
+
+    /*
+    *
+    *
+    *NOTICIAS ACCESS
+    *
+    *
+     */
 
     private static class insertNAsyncTask extends AsyncTask<Noticia,Void,Void>{
 
@@ -150,92 +221,53 @@ public class UserNoticiasRepository {
             data.setValue(noticias);
         }
     }
-
-    private void createAPI(){
-        Gson gson =  new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-                .registerTypeAdapter(Noticia.class, new NoticiaDeserializer())
-                .registerTypeAdapter(User.class,new UserDeserializer())
-                .registerTypeAdapter(Token.class,new TokenDeserializer())
-                .create();
-
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request originalRequest = chain.request();
-
-                        Request.Builder builder = originalRequest.newBuilder().header("Authorization",
-                                Credentials.basic("00357215","00357215"));
-
-                        Request newRequest = builder.build();
-                        return chain.proceed(newRequest);
-                    }
-                }).build();
-
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GameNewsApi.ENDPOINT)
-                /*.client(okHttpClient)*/
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        gameNewsApi = retrofit.create(GameNewsApi.class);
-
-    }
-
-    public LiveData<String> login(String user,String password){
-        final MutableLiveData<String> token = new MutableLiveData<>();
-        Call<Token> call = gameNewsApi.iniciarSesion(user,password);
-        call.enqueue(new Callback<Token>(){
+    public LiveData<List<Noticia>> getAllNoticias(String token) {
+        Log.d("token UNR",token);
+        Call<List<Noticia>> call = gameNewsApi.getNoticias("Bearer "+ token);
+        final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
+        call.enqueue(new Callback<List<Noticia>>() {
             @Override
-            public void onResponse(Call<Token> call, retrofit2.Response<Token> response) {
+            public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
                 if(response.isSuccessful()){
-                    Log.d("Token",response.body().getToken());
-                    token.setValue(response.body().getToken());
+                    data.setValue(response.body());
+                    if (response.body() != null) {
+                        new insertNAsyncTask(noticiaDao).execute(response.body().toArray(new Noticia[response.body().size()]));
+                    }
+                    //noticiaDao.insert(Noticias.toArray(new Noticia[Noticias.size()]));
                 }
                 else{
-                    Log.d("No pudo","obtener token");
+                    Log.d("Error","no succesful");
                 }
-
             }
-
             @Override
-            public void onFailure(Call<Token> call, Throwable t) {
+            public void onFailure(Call<List<Noticia>> call, Throwable t) {
                 Log.d("Error",t.getMessage());
-                Log.d("Error","error");
-        }
-        });
-        return token;
-    }
-
-    /*public LiveData<User> getUserData(){
-
-    }*/
-    public LiveData<User> getUserDetail(String token){
-        final MutableLiveData<User> data = new MutableLiveData<>();
-        final User user = new User();
-        Call<User> call = gameNewsApi.getActiveUser("Bearer "+token);
-
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, retrofit2.Response<User> response) {
-                user.setUser(response.body().getUser());
-                user.setId(response.body().getId());
-                Log.d("User Id",response.body().getId());
-                user.setPassword(response.body().getPassword());
-                user.setFavoriteNews(response.body().getFavoriteNews());
-                data.setValue(user);
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d("Failure",t.getMessage());
-                Log.d("call",call.request().toString());
+                new getAllNoticiasDAO(noticiaDao,data).execute();
+                Log.d("ON Failure","UNR");
             }
         });
         return data;
     }
+
+    public void setFavoritos(String token,String userId,String noticiaId){
+        Call<FavsResponse> call = gameNewsApi.guardarFav(token,userId,noticiaId);
+        call.enqueue(new Callback<FavsResponse>() {
+            @Override
+            public void onResponse(Call<FavsResponse> call, retrofit2.Response<FavsResponse> response) {
+                if (response.isSuccessful()){
+                    Log.d("Success",response.body().getSuccess());
+                }
+                else
+                    Log.d("Error","Not Succesful");
+            }
+            @Override
+            public void onFailure(Call<FavsResponse> call, Throwable t) {
+                Log.d("On Failure",t.getMessage());
+            }
+        });
+        return;
+    }
+
+
 
 }

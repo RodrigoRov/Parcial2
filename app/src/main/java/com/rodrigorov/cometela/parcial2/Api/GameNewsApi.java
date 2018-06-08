@@ -1,5 +1,6 @@
 package com.rodrigorov.cometela.parcial2.Api;
 
+import com.rodrigorov.cometela.parcial2.Models.FavsResponse;
 import com.rodrigorov.cometela.parcial2.Models.Login;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.Token;
@@ -11,6 +12,7 @@ import io.reactivex.Single;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -25,14 +27,13 @@ public interface GameNewsApi {
 
     String ENDPOINT = "http://gamenewsuca.herokuapp.com";
 
-    @GET("/news")
-    Call<List<Noticia>> getNoticias(@Header("Authorization") String codigo);
-
+    //USUARIO
     @GET("/users")
     Single<List<User>> getUsers();
 
-    @POST
-    Single<ResponseBody> agregarUsuario(@Url String url, @Body User user);
+    @FormUrlEncoded
+    @POST("/users")
+    Call<User> agregarUsuario(@Field("user") String user, @Field("avatar") String avatar, @Field("password") String password);
 
     @FormUrlEncoded
     @POST("/login")
@@ -40,7 +41,7 @@ public interface GameNewsApi {
 
     @FormUrlEncoded
     @PUT("/users/{idUser}")
-    Call<User> modifyUser(@Path("idUser") String idUser);
+    Call<User> modifyUser(@Header("Authorization") String codigo,@Path("idUser") String idUser,@Field("password") String pass);
 
     /*@GET("/users/{idUser}")
     Call<User> getActiveUser(@Path("idUser") String idUser);
@@ -49,6 +50,28 @@ public interface GameNewsApi {
     @GET("/users/detail")
     Call<User> getActiveUser(@Header("Authorization") String codigo);
 
+
+    @FormUrlEncoded
+    @POST("/users/{idUser}/fav")
+    Call<FavsResponse> guardarFav(@Header("Authorization") String token, @Path("idUser") String idUser, @Field("new") String idNoticia);
+
+    @FormUrlEncoded
+    @DELETE("/users/{userId}/fav")
+    Call<ResponseBody> deleteFav(@Header("Authorization") String token,@Path("userId") String userId,@Field("new") String idNoticia);
+
+
+    //NOTICIA
+    @GET("/news")
+    Call<List<Noticia>> getNoticias(@Header("Authorization") String codigo);
+
+    @GET("/news/type/list")
+    Call<String[]>  getCategorias(@Header("Authorization") String codigo);
+
+    @GET("/news/type/{game}")
+    Call<List<Noticia>> getNoticiasByGame(@Header("Authorization") String token,@Path("game") String game);
+
+    @GET("/news/{id}")
+    Call<Noticia> getNoticiaDetail(@Header("Authorization") String token,@Path("id") String idNoticia);
 
 
 }

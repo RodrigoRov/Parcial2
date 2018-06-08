@@ -16,28 +16,11 @@ import java.util.List;
 public class UserViewModel extends AndroidViewModel{
 
     private UserNoticiasRepository userRepository;
-    private LiveData<List<User>> Allusers;
-    private LiveData<List<Noticia>> Allnoticias;
-    private List<Noticia> noticias;
     private LiveData<String> token;
-    private LiveData<User> user;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
         userRepository = new UserNoticiasRepository(application);
-        Allusers = userRepository.getAllUsers();
-        if(getToken()!=null)
-            Allnoticias = userRepository.getAllNoticias(getToken().getValue());
-        else
-            Allnoticias=userRepository.getAllNoticias();
-    }
-
-    public LiveData<List<User>> getAllusers() {
-        return Allusers;
-    }
-
-    public LiveData<List<Noticia>> getAllnoticias(String token) {
-        return userRepository.getAllNoticias(token);
     }
 
     public void insert(User user){ userRepository.insertU(user);}

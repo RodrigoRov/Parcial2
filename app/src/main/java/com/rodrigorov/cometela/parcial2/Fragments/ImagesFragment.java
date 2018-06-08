@@ -1,5 +1,9 @@
 package com.rodrigorov.cometela.parcial2.Fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,34 +15,40 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rodrigorov.cometela.parcial2.Adapters.ImagesAdapter;
+import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.R;
+import com.rodrigorov.cometela.parcial2.ViewModel.NoticiaViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class ImagesFragment extends Fragment {
+    NoticiaViewModel noticiaViewModel;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_images,container,false);
 
-        RecyclerView recyclerView = v.findViewById(R.id.fragment_images_recycler_view);
+        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
+        String token = sharedPref.getString("TOKEN","");
 
-        ArrayList<String> ima = new ArrayList<>();
-        fillList(ima);
+        final RecyclerView recyclerView = v.findViewById(R.id.fragment_images_recycler_view);
+        noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
 
-        ImagesAdapter imagesAdapter = new ImagesAdapter(getContext(),ima);
+
+        noticiaViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
+            @Override
+            public void onChanged(@Nullable List<Noticia> noticias) {
+                ImagesAdapter imagesAdapter = new ImagesAdapter(getContext(),noticias);
+                recyclerView.setAdapter(imagesAdapter);
+            }
+        });
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),3);
-        recyclerView.setAdapter(imagesAdapter);
         recyclerView.setLayoutManager(gridLayoutManager);
 
         return v;
     }
 
-    void fillList(ArrayList<String> noticias){
-        noticias.add("https://java.sogeti.nl/JavaBlog/wp-content/uploads/2009/04/android_icon_256.png");
-        noticias.add("https://java.sogeti.nl/JavaBlog/wp-content/uploads/2009/04/android_icon_256.png");
-        noticias.add("https://images.google.com.sv/imgres?imgurl=https%3A%2F%2Fvignette.wikia.nocookie.net%2Fleagueoflegends%2Fimages%2F0%2F0f%2FJhin_OriginalCentered.jpg%2Frevision%2Flatest%2Fscale-to-width-down%2F1215%3Fcb%3D20180414203247&imgrefurl=http%3A%2F%2Fleagueoflegends.wikia.com%2Fwiki%2FJhin&docid=7QAnSIddwVmNTM&tbnid=cZlPjdRaHZz20M%3A&vet=1&w=1215&h=683&source=sh%2Fx%2Fim");
-        noticias.add("https://java.sogeti.nl/JavaBlog/wp-content/uploads/2009/04/android_icon_256.png");
-    }
 }

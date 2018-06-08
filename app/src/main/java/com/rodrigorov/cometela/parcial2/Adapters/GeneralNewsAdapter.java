@@ -10,11 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.R;
+import com.rodrigorov.cometela.parcial2.ViewModel.NoticiaViewModel;
 
 import java.io.InputStream;
 import java.util.List;
@@ -22,9 +24,14 @@ import java.util.List;
 public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.ViewHolder> {
     Context context;
     List<Noticia> noticias;
+    NoticiaViewModel noticiaViewModel;
+    String token;
+    String user;
 
-    public GeneralNewsAdapter(Context context){
+
+    public GeneralNewsAdapter(Context context, NoticiaViewModel noticiaViewModel){
         this.context = context;
+        this.noticiaViewModel = noticiaViewModel;
     }
 
     @NonNull
@@ -36,10 +43,17 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Noticia noticia = noticias.get(position);
+        final Noticia noticia = noticias.get(position);
 
         new DownloadImageTask(holder.imageView).execute(noticia.getCoverImage());
-        holder.textView.setText(noticia.getTitle());
+        holder.titulo.setText(noticia.getTitle());
+        holder.subtitulo.setText(noticia.getDescription());
+        holder.imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                noticiaViewModel.setFavoritos(token,user,noticia.getId());
+            }
+        });
     }
 
     @Override
@@ -52,13 +66,16 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView imageView;
-        TextView textView;
+        TextView titulo,subtitulo;
+        ImageButton imageButton;
 
 
         public ViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.cardview_generalnews_imagen);
-            textView = itemView.findViewById(R.id.cardview_generalnews_nombre);
+            titulo = itemView.findViewById(R.id.cardview_generalnews_nombre);
+            subtitulo = itemView.findViewById(R.id.cardview_generalnews_nota);
+            imageButton = itemView.findViewById(R.id.cardview_generalnews_boton);
         }
     }
 
@@ -91,5 +108,21 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
         Log.d("Entra","Al set");
         this.noticias = noticias;
         notifyDataSetChanged();
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }
