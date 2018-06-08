@@ -17,6 +17,8 @@ public class NoticiaDeserializer implements JsonDeserializer<Noticia>{
         Noticia noticia = new Noticia();
 
         JsonObject jsonObject = json.getAsJsonObject();
+        noticia.setId(jsonObject.get("_id").getAsString());
+
         noticia.setTitle(jsonObject.get("title").getAsString());
         /*LOG
         Log.d("title",jsonObject.get("title").getAsString());*/

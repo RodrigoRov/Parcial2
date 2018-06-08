@@ -4,13 +4,15 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 @Entity(tableName = "noticia_table")
 public class Noticia {
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "noticia_id")
-    private int id;
+    private String id;
 
     @ColumnInfo(name = "noticia_titulo")
     private String title;
@@ -54,11 +56,11 @@ public class Noticia {
         this.coverImage = coverImage;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -54,6 +54,7 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
         ImageView imageView;
         TextView textView;
 
+
         public ViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.cardview_generalnews_imagen);

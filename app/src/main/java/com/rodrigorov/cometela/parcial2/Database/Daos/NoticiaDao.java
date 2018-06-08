@@ -20,7 +20,7 @@ public interface NoticiaDao {
     void deleteAll();
 
     @Query("SELECT * FROM noticia_table")
-    LiveData<List<Noticia>> getAllNoticias();
+    List<Noticia> getAllNoticias();
 
 
 }

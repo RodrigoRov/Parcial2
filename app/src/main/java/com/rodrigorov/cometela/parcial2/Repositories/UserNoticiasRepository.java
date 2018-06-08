@@ -15,30 +15,21 @@ import com.rodrigorov.cometela.parcial2.Api.UserDeserializer;
 import com.rodrigorov.cometela.parcial2.Database.Daos.NoticiaDao;
 import com.rodrigorov.cometela.parcial2.Database.Daos.UserDao;
 import com.rodrigorov.cometela.parcial2.Database.NoticiasDatabase;
-import com.rodrigorov.cometela.parcial2.Models.Login;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.Token;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.Executor;
 
 import javax.inject.Singleton;
 
-import io.reactivex.Scheduler;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -61,7 +52,6 @@ public class UserNoticiasRepository {
         userDao = db.userDao();
         noticiaDao = db.noticiaDao();
         AllUsers = userDao.getAllUsers();
-        AllNoticias = noticiaDao.getAllNoticias();
         createAPI();
     }
 
@@ -78,7 +68,9 @@ public class UserNoticiasRepository {
             public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
                 if(response.isSuccessful()){
                     data.setValue(response.body());
-                    AllNoticias = data;
+                    if (response.body() != null) {
+                        new insertNAsyncTask(noticiaDao).execute(response.body().toArray(new Noticia[response.body().size()]));
+                    }
                     //noticiaDao.insert(Noticias.toArray(new Noticia[Noticias.size()]));
                 }
                 else{
@@ -88,6 +80,7 @@ public class UserNoticiasRepository {
             @Override
             public void onFailure(Call<List<Noticia>> call, Throwable t) {
                 Log.d("Error",t.getMessage());
+                new getAllNoticiasDAO(noticiaDao,data).execute();
                 Log.d("ON Failure","UNR");
             }
         });
@@ -131,8 +124,30 @@ public class UserNoticiasRepository {
 
         @Override
         protected Void doInBackground(Noticia... noticias) {
-            noticiaDao.insert(noticias[0]);
+            noticiaDao.insert(noticias);
             return null;
+        }
+    }
+
+    private static class getAllNoticiasDAO extends AsyncTask<Void,Void,List<Noticia>>{
+
+        NoticiaDao noticiaDao;
+        MutableLiveData<List<Noticia>> data;
+
+        getAllNoticiasDAO(NoticiaDao noticiaDao, MutableLiveData<List<Noticia>> data){
+            this.noticiaDao = noticiaDao;
+            this.data = data;
+        }
+
+        @Override
+        protected List<Noticia> doInBackground(Void... voids) {
+            return noticiaDao.getAllNoticias();
+        }
+
+        @Override
+        protected void onPostExecute(List<Noticia> noticias) {
+            super.onPostExecute(noticias);
+            data.setValue(noticias);
         }
     }
 
@@ -168,26 +183,6 @@ public class UserNoticiasRepository {
 
         gameNewsApi = retrofit.create(GameNewsApi.class);
 
-    }
-
-    private DisposableSingleObserver<List<Noticia>> getRepositoriesObserver() {
-        return new DisposableSingleObserver<List<Noticia>>() {
-            @Override
-            public void onSuccess(List<Noticia> noticias) {
-                if (!noticias.isEmpty()) {
-                    for(Noticia noticia: noticias)
-                        Log.d("noticia",noticia.getTitle());
-                }
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                e.printStackTrace();
-                Log.d("No se pudo","Cargar noticias");
-                // Toast.makeText(, "Can not load repositories", Toast.LENGTH_SHORT).show();
-
-            }
-        };
     }
 
     public LiveData<String> login(String user,String password){
