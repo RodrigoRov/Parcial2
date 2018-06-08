@@ -53,11 +53,10 @@ public interface GameNewsApi {
 
     @FormUrlEncoded
     @POST("/users/{idUser}/fav")
-    Call<FavsResponse> guardarFav(@Header("Authorization") String token, @Path("idUser") String idUser, @Field("new") String idNoticia);
+    Call<FavsResponse> guardarFav(@Header("Authorization") String codigo, @Path("idUser") String idUser, @Field("new") String idNoticia);
 
-    @FormUrlEncoded
     @DELETE("/users/{userId}/fav")
-    Call<ResponseBody> deleteFav(@Header("Authorization") String token,@Path("userId") String userId,@Field("new") String idNoticia);
+    Call<ResponseBody> deleteFav(@Header("Authorization") String token,@Path("userId") String userId);
 
 
     //NOTICIA

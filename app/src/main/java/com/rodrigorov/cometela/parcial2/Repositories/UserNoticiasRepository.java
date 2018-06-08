@@ -32,6 +32,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -250,15 +251,18 @@ public class UserNoticiasRepository {
     }
 
     public void setFavoritos(String token,String userId,String noticiaId){
-        Call<FavsResponse> call = gameNewsApi.guardarFav(token,userId,noticiaId);
+        Call<FavsResponse> call = gameNewsApi.guardarFav("Bearer "+token,userId,noticiaId);
         call.enqueue(new Callback<FavsResponse>() {
             @Override
             public void onResponse(Call<FavsResponse> call, retrofit2.Response<FavsResponse> response) {
                 if (response.isSuccessful()){
                     Log.d("Success",response.body().getSuccess());
                 }
-                else
+                else{
+                    Log.d("call",call.request().toString());
+                    Log.d("response",response.message());
                     Log.d("Error","Not Succesful");
+                }
             }
             @Override
             public void onFailure(Call<FavsResponse> call, Throwable t) {
@@ -266,6 +270,27 @@ public class UserNoticiasRepository {
             }
         });
         return;
+    }
+
+    public void deleteFavoritos(String token,String userId){
+        //Call<ResponseBody> call = gameNewsApi.deleteFav(token,userId,noticiaId);
+        Call<ResponseBody> call = gameNewsApi.deleteFav(token,userId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    Log.d("Success",response.body().toString());
+                }
+                else{
+                    Log.d("Error","no succesful");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("On Failure",t.getMessage());
+            }
+        });
     }
 
 

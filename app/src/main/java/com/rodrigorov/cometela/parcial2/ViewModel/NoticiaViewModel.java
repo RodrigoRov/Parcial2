@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Repositories.UserNoticiasRepository;
@@ -24,6 +25,13 @@ public class NoticiaViewModel extends AndroidViewModel{
     }
 
     public void setFavoritos(String token,String userId,String noticiaId){
+        Log.d("Token",token);
+        Log.d("UserId",userId);
+        Log.d("Noticia Id",noticiaId);
         userRepository.setFavoritos(token,userId,noticiaId);
+    }
+
+    public void deleteFavoritos(String token,String userId){
+        userRepository.deleteFavoritos(token,userId);
     }
 }

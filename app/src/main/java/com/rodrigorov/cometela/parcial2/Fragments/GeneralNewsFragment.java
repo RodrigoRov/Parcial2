@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.rodrigorov.cometela.parcial2.Adapters.GeneralNewsAdapter;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
+import com.rodrigorov.cometela.parcial2.Models.User;
 import com.rodrigorov.cometela.parcial2.R;
 import com.rodrigorov.cometela.parcial2.ViewModel.NoticiaViewModel;
 import com.rodrigorov.cometela.parcial2.ViewModel.UserViewModel;
@@ -27,6 +28,7 @@ public class GeneralNewsFragment extends Fragment {
     GridLayoutManager mLayoutManager;
     RecyclerView recyclerView;
     NoticiaViewModel noticiaViewModel;
+    UserViewModel userViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,8 +37,11 @@ public class GeneralNewsFragment extends Fragment {
 
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
         String token = sharedPref.getString("TOKEN","");
+        String user = sharedPref.getString("UserId","");
 
+        Log.d("User id GNF",user);
         noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
+        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
         final GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext(),noticiaViewModel);
         adapter.setToken(token);
@@ -63,6 +68,15 @@ public class GeneralNewsFragment extends Fragment {
                 adapter.setNoticias(noticias);
             }
         });
+
+        userViewModel.getUser(token).observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                adapter.setUser(user.getId());
+            }
+        });
+
+
 
         return v;
     }

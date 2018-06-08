@@ -27,6 +27,7 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     NoticiaViewModel noticiaViewModel;
     String token;
     String user;
+    Boolean [] clicked;
 
 
     public GeneralNewsAdapter(Context context, NoticiaViewModel noticiaViewModel){
@@ -42,16 +43,32 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Noticia noticia = noticias.get(position);
 
         new DownloadImageTask(holder.imageView).execute(noticia.getCoverImage());
         holder.titulo.setText(noticia.getTitle());
         holder.subtitulo.setText(noticia.getDescription());
+
+        if (clicked[position]){
+            holder.imageButton.setImageResource(android.R.drawable.btn_star_big_on);
+        }
+        else{
+            holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
+        }
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                noticiaViewModel.setFavoritos(token,user,noticia.getId());
+                if (clicked[position]){
+                    holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
+                    clicked[position] = !clicked[position];
+                    noticiaViewModel.deleteFavoritos(token,user);
+                }
+                else{
+                    holder.imageButton.setImageResource(android.R.drawable.btn_star_big_on);
+                    clicked[position] = !clicked[position];
+                    noticiaViewModel.setFavoritos(token,user,noticia.getId());
+                }
             }
         });
     }
@@ -108,6 +125,10 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
         Log.d("Entra","Al set");
         this.noticias = noticias;
         notifyDataSetChanged();
+        clicked = new Boolean[noticias.size()];
+        for(int i = 0;i<clicked.length;i++){
+            clicked[i] = false;
+        }
     }
 
     public String getToken() {

@@ -1,9 +1,12 @@
 package com.rodrigorov.cometela.parcial2.Activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -21,25 +24,28 @@ import com.rodrigorov.cometela.parcial2.Fragments.FavoritosFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GeneralNewsFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.GamesViewPagerFragment;
 import com.rodrigorov.cometela.parcial2.Fragments.SettingsFragment;
+import com.rodrigorov.cometela.parcial2.Models.User;
 import com.rodrigorov.cometela.parcial2.R;
+import com.rodrigorov.cometela.parcial2.ViewModel.UserViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     String token;
+    UserViewModel userViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         String token = sharedPref.getString("TOKEN","");
         if(token.equals("")){
-            Log.d("Entro al if","Yay");
             Intent intent = new Intent(this,LoginActivity.class);
             startActivityForResult(intent,1);
         }
-        Log.d("No al if","Yay");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -49,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        final String temp = new String(token);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -122,10 +126,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1 && resultCode ==1){
-            token = data.getStringExtra("token");
-            Log.d("Token MA",token);
             SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
+            final SharedPreferences.Editor editor = sharedPref.edit();
+            token = data.getStringExtra("token");
+            userViewModel.getUser(token).observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(@Nullable User user) {
+                    editor.putString("UserId",user.getId());
+                    editor.commit();
+                    Log.d("User id",user.getId());
+                }
+            });
+            Log.d("Token MA",token);
             editor.putString("TOKEN",token);
             editor.commit();
         }

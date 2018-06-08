@@ -27,13 +27,15 @@ public class UserDeserializer implements JsonDeserializer<User> {
 
         JsonArray favoriteNews = UserjsonObject.getAsJsonArray("favoriteNews");
         StringBuilder sb = new StringBuilder();
-
+        Log.d("array FAVNEws",String.valueOf(favoriteNews.size()));
         for(int i = 0;i<favoriteNews.size();i++){
             if (i==favoriteNews.size()-1){
                 sb.append(favoriteNews.get(i).getAsJsonObject().get("_id").getAsString());
             }
-            sb.append(favoriteNews.get(i).getAsJsonObject().get("_id").getAsString());
-            sb.append(",");
+            else {
+                sb.append(favoriteNews.get(i).getAsJsonObject().get("_id").getAsString());
+                sb.append(",");
+            }
         }
         user.setFavoriteNews(sb.toString());
         Log.d("Favs",sb.toString());
