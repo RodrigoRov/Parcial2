@@ -223,7 +223,6 @@ public class UserNoticiasRepository {
         }
     }
     public LiveData<List<Noticia>> getAllNoticias(String token) {
-        Log.d("token UNR",token);
         Call<List<Noticia>> call = gameNewsApi.getNoticias("Bearer "+ token);
         final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
         call.enqueue(new Callback<List<Noticia>>() {
@@ -293,27 +292,27 @@ public class UserNoticiasRepository {
         });
     }
 
-    public Noticia getNoticia(String token,String noticiaId){
-        Call<Noticia> call = gameNewsApi.getNoticiaDetail(token,noticiaId);
-        final Noticia[] noticia = {new Noticia()};
+    public LiveData<Noticia> getNoticia(String token,String noticiaId){
+        Call<Noticia> call = gameNewsApi.getNoticiaDetail("Bearer "+token,noticiaId);
+        final MutableLiveData<Noticia> data = new MutableLiveData<>();
         call.enqueue(new Callback<Noticia>() {
             @Override
             public void onResponse(Call<Noticia> call, retrofit2.Response<Noticia> response) {
                 if (response.isSuccessful()){
-                    noticia[0] = response.body();
+                    data.setValue(response.body());
                 }
                 else {
+                    Log.d("call",call.request().toString());
                     Log.d("REsponse",response.message());
                     Log.d("Error","Not succesful");
                 }
             }
-
             @Override
             public void onFailure(Call<Noticia> call, Throwable t) {
                 Log.d("Failure",t.getMessage());
             }
         });
-        return noticia[0];
+        return data;
     }
 
 

@@ -30,7 +30,6 @@ public class GeneralNewsFragment extends Fragment {
     RecyclerView recyclerView;
     NoticiaViewModel noticiaViewModel;
     UserViewModel userViewModel;
-    Boolean isFav = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,8 +39,6 @@ public class GeneralNewsFragment extends Fragment {
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
         String token = sharedPref.getString("TOKEN","");
         String user = sharedPref.getString("UserId","");
-        String favs = sharedPref.getString("favoritos","");
-        Log.d("FAVS",favs);
 
         noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
@@ -64,32 +61,15 @@ public class GeneralNewsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        if(!isFav) {
-            noticiaViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
-                @Override
-                public void onChanged(@Nullable List<Noticia> noticias) {
-                    adapter.setNoticias(noticias);
-                }
-            });
-        }
-        else{
-            List<Noticia> noticias = new ArrayList<>();
-            String[] favo = favs.split(",");
-            for(int i = 0;i<favo.length;i++){
-                noticias.add(noticiaViewModel.getNoticia(token,favo[i]));
+        noticiaViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
+            @Override
+            public void onChanged(@Nullable List<Noticia> noticias) {
+                adapter.setNoticias(noticias);
             }
-            adapter.setNoticias(noticias);
-        }
+        });
         /**/
 
         return v;
     }
 
-    public Boolean getFav() {
-        return isFav;
-    }
-
-    public void setFav(Boolean fav) {
-        isFav = fav;
-    }
 }

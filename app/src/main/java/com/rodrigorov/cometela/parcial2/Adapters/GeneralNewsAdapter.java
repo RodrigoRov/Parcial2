@@ -27,7 +27,7 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     NoticiaViewModel noticiaViewModel;
     String token;
     String user;
-    Boolean [] clicked;
+    static Boolean [] clicked;
 
 
     public GeneralNewsAdapter(Context context, NoticiaViewModel noticiaViewModel){
@@ -122,12 +122,13 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     }
 
     public void setNoticias(List<Noticia> noticias) {
-        Log.d("Entra","Al set");
         this.noticias = noticias;
         notifyDataSetChanged();
-        clicked = new Boolean[noticias.size()];
-        for(int i = 0;i<clicked.length;i++){
-            clicked[i] = false;
+        if(clicked == null) {
+            clicked = new Boolean[noticias.size()];
+            for (int i = 0; i < clicked.length; i++) {
+                clicked[i] = false;
+            }
         }
     }
 

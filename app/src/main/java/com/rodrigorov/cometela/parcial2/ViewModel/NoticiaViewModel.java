@@ -35,7 +35,7 @@ public class NoticiaViewModel extends AndroidViewModel{
         userRepository.deleteFavoritos(token,userId);
     }
 
-    public Noticia getNoticia(String token,String idNoticia){
+    public LiveData<Noticia> getNoticia(String token,String idNoticia){
         return userRepository.getNoticia(token,idNoticia);
     }
 

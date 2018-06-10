@@ -57,31 +57,22 @@ public class MainActivity extends AppCompatActivity {
 
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
+        final GeneralNewsFragment generalNewsFragment = new GeneralNewsFragment();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 // Handle navigation view item clicks here.
                 int id = item.getItemId();
-                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                String token = sharedPref.getString("TOKEN","");
-                String favs = sharedPref.getString("favoritos","");
-                Log.d("token SPREF",token);
-                Log.d("favs",favs);
 
                 if (id == R.id.nav_general_news) {
-                    GeneralNewsFragment fragment = new GeneralNewsFragment();
-                    fragment.setFav(false);
-                    setFragment(fragment);
+                    setFragment(generalNewsFragment);
                 } else if (id == R.id.nav_games) {
                     setFragment(new GamesViewPagerFragment());
                 } else if (id == R.id.nav_settings) {
                     setFragment(new SettingsFragment());
                 } else if (id == R.id.nav_favs) {
-                    GeneralNewsFragment fragment = new GeneralNewsFragment();
-                    fragment.setFav(true);
-                    setFragment(fragment);
+                    setFragment(new FavoritosFragment());
                 }
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -123,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
             Intent intent = new Intent(this,LoginActivity.class);
             startActivityForResult(intent,1);
-            //TODO levantar login activity
             return true;
         }
 
@@ -143,13 +133,10 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
             final SharedPreferences.Editor editor = sharedPref.edit();
             token = data.getStringExtra("token");
-            Log.d("Activity RES",token);
             userViewModel.getUser(token).observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
-                    Log.d("Entra on ","Change");
                     editor.putString("UserId",user.getId());
-                    editor.putString("favoritos",user.getFavoriteNews());
                     editor.commit();
                 }
             });
