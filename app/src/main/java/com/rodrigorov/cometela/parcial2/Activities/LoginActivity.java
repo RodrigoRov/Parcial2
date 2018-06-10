@@ -40,16 +40,10 @@ public class LoginActivity extends AppCompatActivity{
         username = findViewById(R.id.fragment_login_username);
         pass = findViewById(R.id.fragment_login_password);
 
-        /*userViewModel.initToken(username.getText().toString(),pass.getText().toString());
-        if(username.getText().toString().equals(" ")){
-            Log.d("true","perro");
-        }*/
-
         button = findViewById(R.id.fragment_login_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Recube","click");
                 userViewModel.initToken(username.getText().toString(),pass.getText().toString());
 
                 userViewModel.getToken().observe(appCompatActivity, new Observer<String>() {

@@ -21,6 +21,7 @@ import com.rodrigorov.cometela.parcial2.R;
 import com.rodrigorov.cometela.parcial2.ViewModel.NoticiaViewModel;
 import com.rodrigorov.cometela.parcial2.ViewModel.UserViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,6 +30,7 @@ public class GeneralNewsFragment extends Fragment {
     RecyclerView recyclerView;
     NoticiaViewModel noticiaViewModel;
     UserViewModel userViewModel;
+    Boolean isFav = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,14 +40,15 @@ public class GeneralNewsFragment extends Fragment {
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
         String token = sharedPref.getString("TOKEN","");
         String user = sharedPref.getString("UserId","");
+        String favs = sharedPref.getString("favoritos","");
+        Log.d("FAVS",favs);
 
-        Log.d("User id GNF",user);
         noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
         final GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext(),noticiaViewModel);
         adapter.setToken(token);
-        //TODO set userID
+        adapter.setUser(user);
 
         recyclerView = v.findViewById(R.id.generalnews_fragment_recyclerview);
 
@@ -61,23 +64,32 @@ public class GeneralNewsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        noticiaViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
-            @Override
-            public void onChanged(@Nullable List<Noticia> noticias) {
-                Log.d("Entra","On changed");
-                adapter.setNoticias(noticias);
+        if(!isFav) {
+            noticiaViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
+                @Override
+                public void onChanged(@Nullable List<Noticia> noticias) {
+                    adapter.setNoticias(noticias);
+                }
+            });
+        }
+        else{
+            List<Noticia> noticias = new ArrayList<>();
+            String[] favo = favs.split(",");
+            for(int i = 0;i<favo.length;i++){
+                noticias.add(noticiaViewModel.getNoticia(token,favo[i]));
             }
-        });
-
-        userViewModel.getUser(token).observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(@Nullable User user) {
-                adapter.setUser(user.getId());
-            }
-        });
-
-
+            adapter.setNoticias(noticias);
+        }
+        /**/
 
         return v;
+    }
+
+    public Boolean getFav() {
+        return isFav;
+    }
+
+    public void setFav(Boolean fav) {
+        isFav = fav;
     }
 }

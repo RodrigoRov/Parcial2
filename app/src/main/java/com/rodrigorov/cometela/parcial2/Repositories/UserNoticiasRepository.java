@@ -293,6 +293,30 @@ public class UserNoticiasRepository {
         });
     }
 
+    public Noticia getNoticia(String token,String noticiaId){
+        Call<Noticia> call = gameNewsApi.getNoticiaDetail(token,noticiaId);
+        final Noticia[] noticia = {new Noticia()};
+        call.enqueue(new Callback<Noticia>() {
+            @Override
+            public void onResponse(Call<Noticia> call, retrofit2.Response<Noticia> response) {
+                if (response.isSuccessful()){
+                    noticia[0] = response.body();
+                }
+                else {
+                    Log.d("REsponse",response.message());
+                    Log.d("Error","Not succesful");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Noticia> call, Throwable t) {
+                Log.d("Failure",t.getMessage());
+            }
+        });
+        return noticia[0];
+    }
+
+
 
 
 }

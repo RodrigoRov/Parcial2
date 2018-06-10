@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -64,17 +66,22 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
                 SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
                 String token = sharedPref.getString("TOKEN","");
+                String favs = sharedPref.getString("favoritos","");
                 Log.d("token SPREF",token);
+                Log.d("favs",favs);
 
                 if (id == R.id.nav_general_news) {
                     GeneralNewsFragment fragment = new GeneralNewsFragment();
+                    fragment.setFav(false);
                     setFragment(fragment);
                 } else if (id == R.id.nav_games) {
                     setFragment(new GamesViewPagerFragment());
                 } else if (id == R.id.nav_settings) {
                     setFragment(new SettingsFragment());
                 } else if (id == R.id.nav_favs) {
-                    setFragment(new FavoritosFragment());
+                    GeneralNewsFragment fragment = new GeneralNewsFragment();
+                    fragment.setFav(true);
+                    setFragment(fragment);
                 }
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -110,6 +117,13 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivityForResult(intent,1);
+            //TODO levantar login activity
             return true;
         }
 
@@ -129,15 +143,16 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
             final SharedPreferences.Editor editor = sharedPref.edit();
             token = data.getStringExtra("token");
+            Log.d("Activity RES",token);
             userViewModel.getUser(token).observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
+                    Log.d("Entra on ","Change");
                     editor.putString("UserId",user.getId());
+                    editor.putString("favoritos",user.getFavoriteNews());
                     editor.commit();
-                    Log.d("User id",user.getId());
                 }
             });
-            Log.d("Token MA",token);
             editor.putString("TOKEN",token);
             editor.commit();
         }
