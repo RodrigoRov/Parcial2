@@ -281,6 +281,7 @@ public class UserNoticiasRepository {
                     Log.d("Success",response.body().toString());
                 }
                 else{
+
                     Log.d("Error","no succesful");
                 }
             }
@@ -299,6 +300,7 @@ public class UserNoticiasRepository {
             @Override
             public void onResponse(Call<Noticia> call, retrofit2.Response<Noticia> response) {
                 if (response.isSuccessful()){
+                    //TODO que salga de base datos
                     data.setValue(response.body());
                 }
                 else {
