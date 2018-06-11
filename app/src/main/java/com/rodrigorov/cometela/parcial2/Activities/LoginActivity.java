@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity{
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("Click","Da click");
                 userViewModel.initToken(username.getText().toString(),pass.getText().toString());
 
                 userViewModel.getToken().observe(appCompatActivity, new Observer<String>() {

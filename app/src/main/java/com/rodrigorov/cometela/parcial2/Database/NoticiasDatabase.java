@@ -13,7 +13,7 @@ import com.rodrigorov.cometela.parcial2.Database.Daos.UserDao;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
-@Database(entities = {User.class, Noticia.class}, version = 2,exportSchema = false)
+@Database(entities = {User.class, Noticia.class}, version = 3,exportSchema = false)
 public abstract class NoticiasDatabase extends RoomDatabase{
     public abstract UserDao userDao();
     public abstract NoticiaDao noticiaDao();
@@ -27,6 +27,7 @@ public abstract class NoticiasDatabase extends RoomDatabase{
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             NoticiasDatabase.class,"noticias_database")
                             .addMigrations(MIGRATION_1_2)
+                            .addMigrations(MIGRATION_2_3)
                             .build();
                 }
             }
@@ -47,6 +48,18 @@ public abstract class NoticiasDatabase extends RoomDatabase{
                     "noticia_descripcion TEXT," +
                     "noticia_contenido TEXT," +
                     "noticia_juego TEXT);");
+        }
+    };
+
+    static final Migration MIGRATION_2_3 = new Migration(2,3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE toplayer_table(" +
+                    "player_id TEXT PRIMARY KEY NOT NULL," +
+                    "player_name TEXT," +
+                    "player_biografia TEXT," +
+                    "player_avatar TEXT," +
+                    "player_game TEXT);");
         }
     };
 }

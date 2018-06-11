@@ -8,18 +8,30 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rodrigorov.cometela.parcial2.Adapters.ViewPagerAdapter;
+import com.rodrigorov.cometela.parcial2.Models.TopPlayers;
 import com.rodrigorov.cometela.parcial2.R;
 
 public class GamesViewPagerFragment extends Fragment{
+
+    String [] cate;
+    int filtro;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_view_pager,container,false);
 
+        System.out.println("Filtro" + filtro);
+        System.out.println(cate[1]);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getFragmentManager());
-        viewPagerAdapter.AddItem("Noticias",new GeneralNewsFragment());
-        viewPagerAdapter.AddItem("Top Players",new TopPlayersFragment());
+        GeneralNewsFragment fragment = new GeneralNewsFragment();
+        fragment.setCate(cate);
+        fragment.setFiltro(filtro);
+        viewPagerAdapter.AddItem("Noticias",fragment);
+        TopPlayersFragment fragment1 = new TopPlayersFragment();
+        fragment1.setCate(cate);
+        fragment1.setFiltro(filtro);
+        viewPagerAdapter.AddItem("Top Players",fragment1);
         viewPagerAdapter.AddItem("Imagenes",new ImagesFragment());
 
 
@@ -31,5 +43,13 @@ public class GamesViewPagerFragment extends Fragment{
         tabLayout.setupWithViewPager(viewPager,true);
 
         return v;
+    }
+
+    public void setCate(String[] cate) {
+        this.cate = cate;
+    }
+
+    public void setFiltro(int filtro) {
+        this.filtro = filtro;
     }
 }

@@ -103,11 +103,11 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d("DEBUG", "submenu item clicked");
                 Log.d("SubmenuClicked",String.valueOf(i1));
                 if(i1 == 0){
-                    setGeneralFragment(1);
+                    setGamesViewFragment(1);
                 }else if(i1 == 1){
-                    setGeneralFragment(2);
+                    setGamesViewFragment(2);
                 }else if(i1 == 2){
-                    setGeneralFragment(3);
+                    setGamesViewFragment(3);
                 }
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
@@ -120,7 +120,10 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d("DEBUG", "heading clicked");
                 Log.d("numero de item", String.valueOf(i));
                 if (i == 0) {
-                    setGeneralFragment(0);
+                    GeneralNewsFragment fragment = new GeneralNewsFragment();
+                    fragment.setFiltro(0);
+                    fragment.setCate(categorias);
+                    setFragment(fragment);
                 }else if (i == 2) {
                     setFragment(new SettingsFragment());
                 } else if (i == 3) {
@@ -178,8 +181,8 @@ public class MainActivity extends AppCompatActivity {
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    void setGeneralFragment(int filtro){
-        GeneralNewsFragment fragment = new GeneralNewsFragment();
+    void setGamesViewFragment(int filtro){
+        GamesViewPagerFragment fragment = new GamesViewPagerFragment();
         fragment.setCate(categorias);
         fragment.setFiltro(filtro);
         setFragment(fragment);
@@ -225,13 +228,13 @@ public class MainActivity extends AppCompatActivity {
         listDataHeader.add(item2);
 
         ExpandedMenuModel item3 = new ExpandedMenuModel();
-        item3.setIconName("Favoritos");
-        item3.setIconImg(R.drawable.ic_favorite_black_24dp);
+        item3.setIconName("Settings");
+        item3.setIconImg(R.drawable.ic_settings_black_24dp);
         listDataHeader.add(item3);
 
         ExpandedMenuModel item4 = new ExpandedMenuModel();
-        item4.setIconName("Settings");
-        item4.setIconImg(R.drawable.ic_settings_black_24dp);
+        item4.setIconName("Favoritos");
+        item4.setIconImg(R.drawable.ic_favorite_black_24dp);
         listDataHeader.add(item4);
 
         // Adding child data

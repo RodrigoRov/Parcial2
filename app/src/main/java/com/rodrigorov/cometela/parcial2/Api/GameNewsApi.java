@@ -4,6 +4,7 @@ import com.rodrigorov.cometela.parcial2.Models.FavsResponse;
 import com.rodrigorov.cometela.parcial2.Models.Login;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.Token;
+import com.rodrigorov.cometela.parcial2.Models.TopPlayers;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
 import java.util.List;
@@ -73,6 +74,12 @@ public interface GameNewsApi {
 
     @GET("/news/{id}")
     Call<Noticia> getNoticiaDetail(@Header("Authorization") String token,@Path("id") String idNoticia);
+
+
+    //TOP PLAYERS
+    @GET("/players/type/{game}")
+    Call<List<TopPlayers>> getPlayersByGame(@Header("Authorization") String string,@Path("game") String game);
+
 
 
 }

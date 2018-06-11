@@ -12,6 +12,7 @@ import com.rodrigorov.cometela.parcial2.Api.FavsResponseDeserializer;
 import com.rodrigorov.cometela.parcial2.Api.GameNewsApi;
 import com.rodrigorov.cometela.parcial2.Api.NoticiaDeserializer;
 import com.rodrigorov.cometela.parcial2.Api.TokenDeserializer;
+import com.rodrigorov.cometela.parcial2.Api.TopPlayersDeserializer;
 import com.rodrigorov.cometela.parcial2.Api.UserDeserializer;
 import com.rodrigorov.cometela.parcial2.Database.Daos.NoticiaDao;
 import com.rodrigorov.cometela.parcial2.Database.Daos.UserDao;
@@ -19,6 +20,7 @@ import com.rodrigorov.cometela.parcial2.Database.NoticiasDatabase;
 import com.rodrigorov.cometela.parcial2.Models.FavsResponse;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.Token;
+import com.rodrigorov.cometela.parcial2.Models.TopPlayers;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
 import java.io.IOException;
@@ -68,10 +70,12 @@ public class UserNoticiasRepository {
     private void createAPI(){
         Gson gson =  new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+                .setLenient()
                 .registerTypeAdapter(Noticia.class, new NoticiaDeserializer())
                 .registerTypeAdapter(User.class,new UserDeserializer())
                 .registerTypeAdapter(Token.class,new TokenDeserializer())
                 .registerTypeAdapter(FavsResponse.class,new FavsResponseDeserializer())
+                .registerTypeAdapter(TopPlayers.class, new TopPlayersDeserializer())
                 .create();
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -360,6 +364,38 @@ public class UserNoticiasRepository {
         });
         return data;
     }
+
+    /*
+    *
+    *
+    *TOP PLAYERS
+    *
+    *
+     */
+
+    public LiveData<List<TopPlayers>> getPlayersByGame(String token,String game){
+        final MutableLiveData<List<TopPlayers>> data = new MutableLiveData<>();
+        Call<List<TopPlayers>> call = gameNewsApi.getPlayersByGame("Bearer "+token,game);
+        call.enqueue(new Callback<List<TopPlayers>>() {
+            @Override
+            public void onResponse(Call<List<TopPlayers>> call, retrofit2.Response<List<TopPlayers>> response) {
+                if (response.isSuccessful()){
+                    data.setValue(response.body());
+                    System.out.println("Success");
+                }
+                else{
+                   Log.d("No succesful","no");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TopPlayers>> call, Throwable t) {
+                Log.d("On failure",t.getMessage());
+            }
+        });
+        return data;
+    }
+
 
 
 }
