@@ -16,6 +16,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -55,8 +56,9 @@ public interface GameNewsApi {
     @POST("/users/{idUser}/fav")
     Call<FavsResponse> guardarFav(@Header("Authorization") String codigo, @Path("idUser") String idUser, @Field("new") String idNoticia);
 
-    @DELETE("/users/{userId}/fav")
-    Call<ResponseBody> deleteFav(@Header("Authorization") String token,@Path("userId") String userId);
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "/users/{userId}/fav", hasBody = true)
+    Call<ResponseBody> deleteFav(@Header("Authorization") String token,@Path("userId") String userId,@Field("new") String noticiaId);
 
 
     //NOTICIA

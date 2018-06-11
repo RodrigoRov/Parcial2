@@ -269,9 +269,8 @@ public class UserNoticiasRepository {
         return;
     }
 
-    public void deleteFavoritos(String token,String userId){
-        //Call<ResponseBody> call = gameNewsApi.deleteFav(token,userId,noticiaId);
-        Call<ResponseBody> call = gameNewsApi.deleteFav(token,userId);
+    public void deleteFavoritos(String token,String userId,String noticiaId){
+        Call<ResponseBody> call = gameNewsApi.deleteFav("Bearer "+token,userId,noticiaId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -279,7 +278,8 @@ public class UserNoticiasRepository {
                     Log.d("Success",response.body().toString());
                 }
                 else{
-
+                    Log.d("Call",call.request().toString());
+                    Log.d("REsponse",response.message());
                     Log.d("Error","no succesful");
                 }
             }

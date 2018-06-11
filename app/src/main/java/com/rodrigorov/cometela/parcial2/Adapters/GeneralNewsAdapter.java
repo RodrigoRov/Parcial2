@@ -62,7 +62,7 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
                 if (clicked[position]){
                     holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
                     clicked[position] = !clicked[position];
-                    noticiaViewModel.deleteFavoritos(token,user);
+                    noticiaViewModel.deleteFavoritos(token,user,noticia.getId());
                 }
                 else{
                     holder.imageButton.setImageResource(android.R.drawable.btn_star_big_on);

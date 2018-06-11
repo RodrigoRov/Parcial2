@@ -57,7 +57,9 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
             public void onClick(View v) {
                 holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
                 clicked[position] = !clicked[position];
-                noticiaViewModel.deleteFavoritos(token,user);
+                noticiaViewModel.deleteFavoritos(token,user,noticia.getId());
+                noticias.remove(noticia);
+                notifyDataSetChanged();
             }
         });
     }
