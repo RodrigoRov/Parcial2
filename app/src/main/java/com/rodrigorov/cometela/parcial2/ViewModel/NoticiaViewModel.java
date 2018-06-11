@@ -43,4 +43,8 @@ public class NoticiaViewModel extends AndroidViewModel{
         return userRepository.getNoticiaByGame(token,game);
     }
 
+    public LiveData<String []> getCategorias(String token){
+        return userRepository.getCategorias(token);
+    }
+
 }

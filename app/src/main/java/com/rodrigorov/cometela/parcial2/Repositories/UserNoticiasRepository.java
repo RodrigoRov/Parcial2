@@ -316,7 +316,7 @@ public class UserNoticiasRepository {
     }
 
     public LiveData<List<Noticia>> getNoticiaByGame(String token,String game){
-        Call<List<Noticia>> call = gameNewsApi.getNoticiasByGame(token,game);
+        Call<List<Noticia>> call = gameNewsApi.getNoticiasByGame("Bearer "+token,game);
         final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
         call.enqueue(new Callback<List<Noticia>>() {
             @Override
@@ -332,6 +332,30 @@ public class UserNoticiasRepository {
             @Override
             public void onFailure(Call<List<Noticia>> call, Throwable t) {
                 Log.d("ON Failure",t.getMessage());
+            }
+        });
+        return data;
+    }
+
+    public LiveData<String []> getCategorias(String token){
+        final MutableLiveData<String []> data = new MutableLiveData<>();
+        Call<String []> call = gameNewsApi.getCategorias("Bearer "+token);
+        call.enqueue(new Callback<String[]>() {
+            @Override
+            public void onResponse(Call<String[]> call, retrofit2.Response<String[]> response) {
+                if(response.isSuccessful()){
+                    data.setValue(response.body());
+                }
+                else{
+                    Log.d("Call",call.request().toString());
+                    Log.d("Response",response.message());
+                    Log.d("Categorias","No successful");
+                }
+            }
+            @Override
+            public void onFailure(Call<String[]> call, Throwable t) {
+                Log.d("Categorias","On failure");
+                Log.d("Error",t.getMessage());
             }
         });
         return data;

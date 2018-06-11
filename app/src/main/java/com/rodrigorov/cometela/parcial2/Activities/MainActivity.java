@@ -1,6 +1,7 @@
 package com.rodrigorov.cometela.parcial2.Activities;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -33,9 +34,11 @@ import com.rodrigorov.cometela.parcial2.Fragments.SettingsFragment;
 import com.rodrigorov.cometela.parcial2.Models.ExpandedMenuModel;
 import com.rodrigorov.cometela.parcial2.Models.User;
 import com.rodrigorov.cometela.parcial2.R;
+import com.rodrigorov.cometela.parcial2.ViewModel.NoticiaViewModel;
 import com.rodrigorov.cometela.parcial2.ViewModel.UserViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,21 +46,24 @@ public class MainActivity extends AppCompatActivity {
 
     String token;
     UserViewModel userViewModel;
+    NoticiaViewModel noticiaViewModel;
     ExpandableListAdapter mMenuAdapter;
     ExpandableListView expandableList;
     List<ExpandedMenuModel> listDataHeader;
     HashMap<ExpandedMenuModel, List<String>> listDataChild;
+    AppCompatActivity appCompatActivity = this;
+    String [] categorias;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        String token = sharedPref.getString("TOKEN","");
+        token = sharedPref.getString("TOKEN","");
         if(token.equals("")){
             Intent intent = new Intent(this,LoginActivity.class);
             startActivityForResult(intent,1);
@@ -89,10 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         expandableList = findViewById(R.id.navigation_explandable_view);
         prepareListData();
-        mMenuAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild, expandableList);
 
-        // setting list adapter
-        expandableList.setAdapter(mMenuAdapter);
 
         expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -100,24 +103,14 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d("DEBUG", "submenu item clicked");
                 Log.d("SubmenuClicked",String.valueOf(i1));
                 if(i1 == 0){
-                    GeneralNewsFragment fragment = new GeneralNewsFragment();
-                    fragment.setFiltro(1);
-                    setFragment(fragment);
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    drawer.closeDrawer(GravityCompat.START);
+                    setGeneralFragment(1);
                 }else if(i1 == 1){
-                    GeneralNewsFragment fragment = new GeneralNewsFragment();
-                    fragment.setFiltro(2);
-                    setFragment(fragment);
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    drawer.closeDrawer(GravityCompat.START);
+                    setGeneralFragment(2);
                 }else if(i1 == 2){
-                    GeneralNewsFragment fragment = new GeneralNewsFragment();
-                    fragment.setFiltro(3);
-                    setFragment(fragment);
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    drawer.closeDrawer(GravityCompat.START);
+                    setGeneralFragment(3);
                 }
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
                 return false;
             }
         });
@@ -127,45 +120,15 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d("DEBUG", "heading clicked");
                 Log.d("numero de item", String.valueOf(i));
                 if (i == 0) {
-                    GeneralNewsFragment fragment = new GeneralNewsFragment();
-                    fragment.setFiltro(0);
-                    setFragment(fragment);
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    drawer.closeDrawer(GravityCompat.START);
+                    setGeneralFragment(0);
                 }else if (i == 2) {
                     setFragment(new SettingsFragment());
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    drawer.closeDrawer(GravityCompat.START);
                 } else if (i == 3) {
                     setFragment(new FavoritosFragment());
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    drawer.closeDrawer(GravityCompat.START);
                 }
                 return false;
             }
         });
-
-        /*navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                // Handle navigation view item clicks here.
-                int id = item.getItemId();
-
-                if (id == R.id.nav_general_news) {
-                    setFragment(generalNewsFragment);
-                } else if (id == R.id.nav_games) {
-                    setFragment(new GamesViewPagerFragment());
-                } else if (id == R.id.nav_settings) {
-                    setFragment(new SettingsFragment());
-                } else if (id == R.id.nav_favs) {
-                    setFragment(new FavoritosFragment());
-                }
-
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
-            }
-        });*/
     }
 
     @Override
@@ -211,6 +174,15 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.contentFrame,fragment);
         fragmentTransaction.commit();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
+    void setGeneralFragment(int filtro){
+        GeneralNewsFragment fragment = new GeneralNewsFragment();
+        fragment.setCate(categorias);
+        fragment.setFiltro(filtro);
+        setFragment(fragment);
     }
 
     @Override
@@ -226,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.commit();
                 }
             });
+
             editor.putString("TOKEN",token);
             editor.commit();
         }
@@ -263,13 +236,22 @@ public class MainActivity extends AppCompatActivity {
 
         // Adding child data
 
-        List<String> heading2 = new ArrayList<String>();
-        heading2.add("Submenu of item 2");
-        heading2.add("Submenu of item 2");
-        heading2.add("Submenu of item 2");
-        // Header, Child data
-        listDataChild.put(listDataHeader.get(1), heading2);
+        noticiaViewModel.getCategorias(token).observe(this, new Observer<String[]>() {
+            @Override
+            public void onChanged(@Nullable String[] strings) {
+                categorias = strings != null ? strings.clone() : new String[0];
+                List<String> heading2 = null;
+                if (strings != null) {
+                    heading2 = new ArrayList<>(Arrays.asList(strings));
+                }
+                // Header, Child data
+                listDataChild.put(listDataHeader.get(1), heading2);
 
+                mMenuAdapter = new ExpandableListAdapter(appCompatActivity, listDataHeader, listDataChild, expandableList);
+                // setting list adapter
+                expandableList.setAdapter(mMenuAdapter);
+            }
+        });
     }
 
 }
