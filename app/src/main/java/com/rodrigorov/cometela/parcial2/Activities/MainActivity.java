@@ -98,6 +98,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
                 //Log.d("DEBUG", "submenu item clicked");
+                Log.d("SubmenuClicked",String.valueOf(i1));
+                if(i1 == 0){
+                    GeneralNewsFragment fragment = new GeneralNewsFragment();
+                    fragment.setFiltro(1);
+                    setFragment(fragment);
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                }else if(i1 == 1){
+                    GeneralNewsFragment fragment = new GeneralNewsFragment();
+                    fragment.setFiltro(2);
+                    setFragment(fragment);
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                }else if(i1 == 2){
+                    GeneralNewsFragment fragment = new GeneralNewsFragment();
+                    fragment.setFiltro(3);
+                    setFragment(fragment);
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
                 return false;
             }
         });
@@ -105,6 +125,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
                 //Log.d("DEBUG", "heading clicked");
+                Log.d("numero de item", String.valueOf(i));
+                if (i == 0) {
+                    GeneralNewsFragment fragment = new GeneralNewsFragment();
+                    fragment.setFiltro(0);
+                    setFragment(fragment);
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                }else if (i == 2) {
+                    setFragment(new SettingsFragment());
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else if (i == 3) {
+                    setFragment(new FavoritosFragment());
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
                 return false;
             }
         });
@@ -205,31 +241,33 @@ public class MainActivity extends AppCompatActivity {
         listDataChild = new HashMap<ExpandedMenuModel, List<String>>();
 
         ExpandedMenuModel item1 = new ExpandedMenuModel();
-        item1.setIconName("heading1");
-        item1.setIconImg(android.R.drawable.ic_delete);
+        item1.setIconName("News");
+        item1.setIconImg(R.drawable.ic_public_black_24dp);
         // Adding data header
         listDataHeader.add(item1);
 
         ExpandedMenuModel item2 = new ExpandedMenuModel();
-        item2.setIconName("heading2");
-        item2.setIconImg(android.R.drawable.ic_delete);
+        item2.setIconName("Games");
+        item2.setIconImg(R.drawable.ic_games_black_24dp);
         listDataHeader.add(item2);
 
         ExpandedMenuModel item3 = new ExpandedMenuModel();
-        item3.setIconName("heading3");
-        item3.setIconImg(android.R.drawable.ic_delete);
+        item3.setIconName("Favoritos");
+        item3.setIconImg(R.drawable.ic_favorite_black_24dp);
         listDataHeader.add(item3);
 
+        ExpandedMenuModel item4 = new ExpandedMenuModel();
+        item4.setIconName("Settings");
+        item4.setIconImg(R.drawable.ic_settings_black_24dp);
+        listDataHeader.add(item4);
+
         // Adding child data
-        List<String> heading1 = new ArrayList<String>();
-        heading1.add("Submenu of item 1");
 
         List<String> heading2 = new ArrayList<String>();
         heading2.add("Submenu of item 2");
         heading2.add("Submenu of item 2");
         heading2.add("Submenu of item 2");
-
-        listDataChild.put(listDataHeader.get(0), heading1);// Header, Child data
+        // Header, Child data
         listDataChild.put(listDataHeader.get(1), heading2);
 
     }

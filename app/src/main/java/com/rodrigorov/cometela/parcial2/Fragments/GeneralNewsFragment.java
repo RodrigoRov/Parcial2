@@ -30,6 +30,7 @@ public class GeneralNewsFragment extends Fragment {
     RecyclerView recyclerView;
     NoticiaViewModel noticiaViewModel;
     UserViewModel userViewModel;
+    int filtro =0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,15 +62,47 @@ public class GeneralNewsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        noticiaViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
-            @Override
-            public void onChanged(@Nullable List<Noticia> noticias) {
-                adapter.setNoticias(noticias);
-            }
-        });
-        /**/
+        switch (filtro){
+            case 0:
+                noticiaViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
+                    @Override
+                    public void onChanged(@Nullable List<Noticia> noticias) {
+                        adapter.setNoticias(noticias);
+                    }
+                });
+                break;
+            case 1:
+                noticiaViewModel.getNoticiaByGame(token,"lol").observe(this, new Observer<List<Noticia>>() {
+                    @Override
+                    public void onChanged(@Nullable List<Noticia> noticias) {
+                        adapter.setNoticias(noticias);
+                    }
+                });
+                break;
+            case 2:
+                noticiaViewModel.getNoticiaByGame(token,"lol").observe(this, new Observer<List<Noticia>>() {
+                    @Override
+                    public void onChanged(@Nullable List<Noticia> noticias) {
+                        adapter.setNoticias(noticias);
+                    }
+                });
+                break;
+            case 3:
+                noticiaViewModel.getNoticiaByGame(token,"lol").observe(this, new Observer<List<Noticia>>() {
+                    @Override
+                    public void onChanged(@Nullable List<Noticia> noticias) {
+                        adapter.setNoticias(noticias);
+                    }
+                });
+                break;
+        }
+
+
 
         return v;
     }
 
+    public void setFiltro(int filtro) {
+        this.filtro = filtro;
+    }
 }

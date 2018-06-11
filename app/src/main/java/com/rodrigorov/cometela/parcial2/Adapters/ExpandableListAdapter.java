@@ -35,14 +35,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getGroupCount() {
         int i = mListDataHeader.size();
-        Log.d("GROUPCOUNT", String.valueOf(i));
         return this.mListDataHeader.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
         int childCount = 0;
-        if (groupPosition != 2) {
+        if (groupPosition == 1) {
             childCount = this.mListDataChild.get(this.mListDataHeader.get(groupPosition))
                     .size();
         }
@@ -56,8 +55,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        Log.d("CHILD", mListDataChild.get(this.mListDataHeader.get(groupPosition))
-                .get(childPosition).toString());
         return this.mListDataChild.get(this.mListDataHeader.get(groupPosition))
                 .get(childPosition);
     }
@@ -88,7 +85,19 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.submenu);
         ImageView headerIcon = (ImageView) convertView.findViewById(R.id.iconimage);
-        lblListHeader.setTypeface(null, Typeface.BOLD);
+        //lblListHeader.setTypeface(null, Typeface.BOLD);
+        if(groupPosition == 0){
+
+        }
+        else if(groupPosition == 1){
+            ImageView dropIcon = convertView.findViewById(R.id.dropdownicon);
+            if(isExpanded){
+                dropIcon.setImageResource(R.drawable.ic_keyboard_arrow_down);
+            }
+            else{
+                dropIcon.setImageResource(R.drawable.ic_keyboard_arrow_up);
+            }
+        }
         lblListHeader.setText(headerTitle.getIconName());
         headerIcon.setImageResource(headerTitle.getIconImg());
         return convertView;
@@ -116,4 +125,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
+
+
 }

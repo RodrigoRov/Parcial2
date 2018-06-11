@@ -241,9 +241,7 @@ public class UserNoticiasRepository {
             }
             @Override
             public void onFailure(Call<List<Noticia>> call, Throwable t) {
-                Log.d("Error",t.getMessage());
                 new getAllNoticiasDAO(noticiaDao,data).execute();
-                Log.d("ON Failure","UNR");
             }
         });
         return data;
@@ -317,7 +315,27 @@ public class UserNoticiasRepository {
         return data;
     }
 
+    public LiveData<List<Noticia>> getNoticiaByGame(String token,String game){
+        Call<List<Noticia>> call = gameNewsApi.getNoticiasByGame(token,game);
+        final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
+        call.enqueue(new Callback<List<Noticia>>() {
+            @Override
+            public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
+                if(response.isSuccessful()){
+                    data.setValue(response.body());
+                }
+                else{
+                    Log.d("No", "Succesful");
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<Noticia>> call, Throwable t) {
+                Log.d("ON Failure",t.getMessage());
+            }
+        });
+        return data;
+    }
 
 
 }
