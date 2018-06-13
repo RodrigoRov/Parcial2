@@ -3,10 +3,12 @@ package com.rodrigorov.cometela.parcial2.Fragments;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rodrigorov.cometela.parcial2.Activities.NoticiaActivity;
 import com.rodrigorov.cometela.parcial2.Adapters.GeneralNewsAdapter;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.User;
@@ -30,6 +33,8 @@ public class GeneralNewsFragment extends Fragment {
     RecyclerView recyclerView;
     NoticiaViewModel noticiaViewModel;
     UserViewModel userViewModel;
+    private SwipeRefreshLayout swipeContainer;
+    GeneralNewsFragment fragment = this;
     int filtro =0;
     String [] cate;
 
@@ -39,16 +44,74 @@ public class GeneralNewsFragment extends Fragment {
 
 
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
-        String token = sharedPref.getString("TOKEN","");
+        final String token = sharedPref.getString("TOKEN","");
         String user = sharedPref.getString("UserId","");
 
         noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+        swipeContainer = v.findViewById(R.id.swipeContainer);
 
         final GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext(),noticiaViewModel);
         adapter.setToken(token);
         adapter.setUser(user);
+        adapter.setOnClick(new GeneralNewsAdapter.onItemClicked() {
+            @Override
+            public void onItemClick(int position) {
+                Noticia noticia = adapter.getNoticias().get(position);
+                Intent newIntent = new Intent(getContext(),NoticiaActivity.class);
+                newIntent.putExtra("imagen",noticia.getCoverImage());
+                newIntent.putExtra("titulo",noticia.getTitle());
+                newIntent.putExtra("contenido",noticia.getBody());
+                startActivityForResult(newIntent,2);
 
+            }
+        });
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.setNoticias(new ArrayList<Noticia>());
+                switch (filtro){
+                    case 0:
+                        noticiaViewModel.getAllnoticias(token).observe(fragment, new Observer<List<Noticia>>() {
+                            @Override
+                            public void onChanged(@Nullable List<Noticia> noticias) {
+                                adapter.setNoticias(noticias);
+                            }
+                        });
+                        break;
+                    case 1:
+                        noticiaViewModel.getNoticiaByGame(token,cate[0]).observe(fragment, new Observer<List<Noticia>>() {
+                            @Override
+                            public void onChanged(@Nullable List<Noticia> noticias) {
+                                adapter.setNoticias(noticias);
+                            }
+                        });
+                        break;
+                    case 2:
+                        noticiaViewModel.getNoticiaByGame(token,cate[1]).observe(fragment, new Observer<List<Noticia>>() {
+                            @Override
+                            public void onChanged(@Nullable List<Noticia> noticias) {
+                                adapter.setNoticias(noticias);
+                            }
+                        });
+                        break;
+                    case 3:
+                        noticiaViewModel.getNoticiaByGame(token,cate[2]).observe(fragment, new Observer<List<Noticia>>() {
+                            @Override
+                            public void onChanged(@Nullable List<Noticia> noticias) {
+                                adapter.setNoticias(noticias);
+                            }
+                        });
+                        break;
+                }
+                swipeContainer.setRefreshing(false);
+            }
+        });
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
         recyclerView = v.findViewById(R.id.generalnews_fragment_recyclerview);
 
 

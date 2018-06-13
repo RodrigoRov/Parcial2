@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.rodrigorov.cometela.parcial2.Models.TopPlayers;
 import com.rodrigorov.cometela.parcial2.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class TopPlayersAdapter extends RecyclerView.Adapter<TopPlayersAdapter.Vi
         if(player != null) {
             holder.nombre.setText(player.getPlayerName());
             holder.desc.setText(player.getPlayerBiografia());
+            Picasso.with(context).load(player.getPlayerAvatar()).into(holder.imageView);
         }
 
     }

@@ -22,6 +22,7 @@
         <activity android:name=".Activities.LoginActivity"
             android:noHistory="true">
         </activity>
+        <activity android:name=".Activities.NoticiaActivity" />
     </application>
 
 </manifest>

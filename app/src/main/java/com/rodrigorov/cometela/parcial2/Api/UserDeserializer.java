@@ -30,11 +30,16 @@ public class UserDeserializer implements JsonDeserializer<User> {
         Log.d("array FAVNEws",String.valueOf(favoriteNews.size()));
         for(int i = 0;i<favoriteNews.size();i++){
             if (i==favoriteNews.size()-1){
-                sb.append(favoriteNews.get(i).getAsJsonObject().get("_id").getAsString());
+                System.out.println(favoriteNews.get(i).getAsString());
+                sb.append(favoriteNews.get(i).getAsString());
+                //sb.append(favoriteNews.get(i).getAsJsonObject().get("_id").getAsString());
             }
             else {
-                sb.append(favoriteNews.get(i).getAsJsonObject().get("_id").getAsString());
+                System.out.println(favoriteNews.get(i).getAsString());
+                sb.append(favoriteNews.get(i).getAsString());
                 sb.append(",");
+                //sb.append(favoriteNews.get(i).getAsJsonObject().get("_id").getAsString());
+                //sb.append(",");
             }
         }
         user.setFavoriteNews(sb.toString());

@@ -53,6 +53,9 @@ public class TopPlayersFragment extends Fragment{
                 playerViewModel.getPlayerByGame(token,cate[0]).observe(this, new Observer<List<TopPlayers>>() {
                     @Override
                     public void onChanged(@Nullable List<TopPlayers> topPlayers) {
+                        System.out.println("IS TOP PLAYERS EMPTY:" + topPlayers.isEmpty());
+                        //System.out.println("TOP PLAYER NAME: " + topPlayers.get(0).getPlayerName());
+                        //System.out.println("TOP PLAYER AVATAR: "+topPlayers.get(0).getPlayerAvatar());
                         adapter.setPlayers(topPlayers);
                     }
                 });

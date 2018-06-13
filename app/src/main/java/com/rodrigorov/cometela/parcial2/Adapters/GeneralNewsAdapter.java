@@ -28,7 +28,11 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     String token;
     String user;
     static Boolean [] clicked;
+    private onItemClicked onClick;
 
+    public interface onItemClicked{
+        void onItemClick(int position);
+    }
 
     public GeneralNewsAdapter(Context context, NoticiaViewModel noticiaViewModel){
         this.context = context;
@@ -49,6 +53,13 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
         new DownloadImageTask(holder.imageView).execute(noticia.getCoverImage());
         holder.titulo.setText(noticia.getTitle());
         holder.subtitulo.setText(noticia.getDescription());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClick.onItemClick(position);
+            }
+        });
 
         if (clicked[position]){
             holder.imageButton.setImageResource(android.R.drawable.btn_star_big_on);
@@ -146,5 +157,13 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public void setOnClick(onItemClicked onClick) {
+        this.onClick = onClick;
+    }
+
+    public List<Noticia> getNoticias() {
+        return noticias;
     }
 }

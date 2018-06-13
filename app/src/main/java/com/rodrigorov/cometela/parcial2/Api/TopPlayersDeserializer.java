@@ -20,6 +20,7 @@ public class TopPlayersDeserializer implements JsonDeserializer<TopPlayers> {
         player.setPlayerName(jsonObject.get("name").getAsString());
         player.setPlayerBiografia(jsonObject.get("biografia").getAsString());
         player.setPlayerGame(jsonObject.get("game").getAsString());
-        return null;
+
+        return player;
     }
 }
