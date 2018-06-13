@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
                 //Log.d("DEBUG", "submenu item clicked");
-                Log.d("SubmenuClicked",String.valueOf(i1));
                 if(i1 == 0){
                     setGamesViewFragment(1);
                 }else if(i1 == 1){
@@ -118,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
                 //Log.d("DEBUG", "heading clicked");
-                Log.d("numero de item", String.valueOf(i));
                 if (i == 0) {
                     GeneralNewsFragment fragment = new GeneralNewsFragment();
                     fragment.setFiltro(0);
@@ -162,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
+            noticiaViewModel.deleteAll();
             editor.clear();
             editor.apply();
             Intent intent = new Intent(this,LoginActivity.class);

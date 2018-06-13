@@ -7,17 +7,17 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
-import com.rodrigorov.cometela.parcial2.Repositories.UserNoticiasRepository;
+import com.rodrigorov.cometela.parcial2.Repositories.Repository;
 
 import java.util.List;
 
 public class NoticiaViewModel extends AndroidViewModel{
 
-    private UserNoticiasRepository userRepository;
+    private Repository userRepository;
 
     public NoticiaViewModel(@NonNull Application application) {
         super(application);
-        userRepository = new UserNoticiasRepository(application);
+        userRepository = new Repository(application);
     }
 
     public LiveData<List<Noticia>> getAllnoticias(String token) {
@@ -40,11 +40,17 @@ public class NoticiaViewModel extends AndroidViewModel{
     }
 
     public LiveData<List<Noticia>> getNoticiaByGame(String token,String game){
-        return userRepository.getNoticiaByGame(token,game);
+        //return userRepository.getNoticiaByGameApi(token,game);
+        return userRepository.getNoticiasByGameDB(game);
     }
 
     public LiveData<String []> getCategorias(String token){
+        System.out.println("NOTICIA VM INGRESA TOKEN: " + token);
         return userRepository.getCategorias(token);
+    }
+
+    public void deleteAll(){
+        userRepository.deleteAllNoticias();
     }
 
 }

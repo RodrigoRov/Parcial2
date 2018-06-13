@@ -42,7 +42,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Singleton
-public class UserNoticiasRepository {
+public class Repository {
 
     private final NoticiaDao noticiaDao;
     private final UserDao userDao;
@@ -50,7 +50,7 @@ public class UserNoticiasRepository {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private List<Noticia> Noticias;
 
-    public UserNoticiasRepository(Application application){
+    public Repository(Application application){
         NoticiasDatabase db = NoticiasDatabase.getDatabase(application);
         userDao = db.userDao();
         noticiaDao = db.noticiaDao();
@@ -226,6 +226,44 @@ public class UserNoticiasRepository {
             data.setValue(noticias);
         }
     }
+
+    private static class getNoticiasByGameDAO extends AsyncTask<String,Void,List<Noticia>>{
+        NoticiaDao noticiaDao;
+        MutableLiveData<List<Noticia>> data;
+
+        getNoticiasByGameDAO(NoticiaDao noticiaDao, MutableLiveData<List<Noticia>> data){
+            this.noticiaDao = noticiaDao;
+            this.data = data;
+        }
+
+        @Override
+        protected List<Noticia> doInBackground(String... strings) {
+            System.out.println("STRINGS EN O"+strings[0]);
+            return noticiaDao.getNoticiaByGame(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Noticia> listLiveData) {
+            super.onPostExecute(listLiveData);
+            System.out.println("LISTA DE NOTICIAS BY GAME " + listLiveData.isEmpty());
+            data.setValue(listLiveData);
+        }
+    }
+
+    private static class deleteNoticias extends AsyncTask<Void,Void,Void>{
+        NoticiaDao noticiaDao;
+        deleteNoticias(NoticiaDao noticiaDao){
+            this.noticiaDao = noticiaDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            noticiaDao.deleteAll();
+            return null;
+        }
+    }
+
+
     public LiveData<List<Noticia>> getAllNoticias(String token) {
         Call<List<Noticia>> call = gameNewsApi.getNoticias("Bearer "+ token);
         final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
@@ -319,13 +357,14 @@ public class UserNoticiasRepository {
         return data;
     }
 
-    public LiveData<List<Noticia>> getNoticiaByGame(String token,String game){
+    public LiveData<List<Noticia>> getNoticiaByGameApi(String token, String game){
         Call<List<Noticia>> call = gameNewsApi.getNoticiasByGame("Bearer "+token,game);
         final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
         call.enqueue(new Callback<List<Noticia>>() {
             @Override
             public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
                 if(response.isSuccessful()){
+
                     data.setValue(response.body());
                 }
                 else{
@@ -363,6 +402,18 @@ public class UserNoticiasRepository {
             }
         });
         return data;
+    }
+
+    public LiveData<List<Noticia>> getNoticiasByGameDB(String game){
+        System.out.println("LLEGA AL NOTICIAS DB");
+        System.out.println("GAME         "+game);
+        MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
+        new getNoticiasByGameDAO(noticiaDao,data).execute(game);
+        return data;
+    }
+
+    public void deleteAllNoticias(){
+        new deleteNoticias(noticiaDao).execute();
     }
 
     /*

@@ -39,9 +39,11 @@ public class TopPlayersAdapter extends RecyclerView.Adapter<TopPlayersAdapter.Vi
         /*Player player = players.get(position);
         * holder.nombre.setText(player.getName());
         * */
+        if(player != null) {
+            holder.nombre.setText(player.getPlayerName());
+            holder.desc.setText(player.getPlayerBiografia());
+        }
 
-        holder.nombre.setText(player.getPlayerName());
-        holder.desc.setText(player.getPlayerBiografia());
     }
 
     @Override

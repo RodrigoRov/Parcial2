@@ -22,5 +22,9 @@ public interface NoticiaDao {
     @Query("SELECT * FROM noticia_table")
     List<Noticia> getAllNoticias();
 
+    @Query("SELECT * FROM noticia_table WHERE noticia_juego = :game")
+    List<Noticia> getNoticiaByGame(String game);
+
+
 
 }

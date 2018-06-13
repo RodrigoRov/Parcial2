@@ -47,6 +47,7 @@ public class TopPlayersFragment extends Fragment{
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
 
+        System.out.println("FILTRO TPF: " + filtro + " CATEGORIA: "+ cate[filtro]);
         switch (filtro){
             case 1:
                 playerViewModel.getPlayerByGame(token,cate[0]).observe(this, new Observer<List<TopPlayers>>() {

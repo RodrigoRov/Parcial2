@@ -21,7 +21,7 @@ public class GamesViewPagerFragment extends Fragment{
         View v = inflater.inflate(R.layout.fragment_view_pager,container,false);
 
         System.out.println("Filtro" + filtro);
-        System.out.println(cate[1]);
+        System.out.println(cate[filtro-1]);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getFragmentManager());
         GeneralNewsFragment fragment = new GeneralNewsFragment();

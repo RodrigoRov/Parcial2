@@ -6,17 +6,17 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.rodrigorov.cometela.parcial2.Models.TopPlayers;
-import com.rodrigorov.cometela.parcial2.Repositories.UserNoticiasRepository;
+import com.rodrigorov.cometela.parcial2.Repositories.Repository;
 
 import java.util.List;
 
 public class PlayerViewModel extends AndroidViewModel{
 
-    private UserNoticiasRepository userRepository;
+    private Repository userRepository;
 
     public PlayerViewModel(@NonNull Application application) {
         super(application);
-        userRepository = new UserNoticiasRepository(application);
+        userRepository = new Repository(application);
     }
 
     public LiveData<List<TopPlayers>> getPlayerByGame(String token, String game){
