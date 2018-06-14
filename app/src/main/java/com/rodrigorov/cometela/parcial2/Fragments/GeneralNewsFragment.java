@@ -100,7 +100,6 @@ public class GeneralNewsFragment extends Fragment {
                         noticiaViewModel.getNoticiaByGame(token,cate[2]).observe(fragment, new Observer<List<Noticia>>() {
                             @Override
                             public void onChanged(@Nullable List<Noticia> noticias) {
-                                System.out.println("CATEGORIA "+cate[2]);
                                 adapter.setNoticias(noticias);
                             }
                         });
