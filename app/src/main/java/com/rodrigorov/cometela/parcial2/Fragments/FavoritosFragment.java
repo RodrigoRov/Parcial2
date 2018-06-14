@@ -3,6 +3,7 @@ package com.rodrigorov.cometela.parcial2.Fragments;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rodrigorov.cometela.parcial2.Activities.NoticiaActivity;
 import com.rodrigorov.cometela.parcial2.Adapters.FavoritosAdapter;
 import com.rodrigorov.cometela.parcial2.Adapters.GeneralNewsAdapter;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
@@ -49,6 +51,17 @@ public class FavoritosFragment  extends Fragment{
         final FavoritosAdapter adapter = new FavoritosAdapter(getContext(),noticiaViewModel);
         adapter.setToken(token);
         adapter.setUser(user);
+        adapter.setOnClick(new FavoritosAdapter.OnItemClick() {
+            @Override
+            public void OnItemClick(int position) {
+                Noticia noticia = adapter.getNoticias().get(position);
+                Intent newIntent = new Intent(getContext(),NoticiaActivity.class);
+                newIntent.putExtra("imagen",noticia.getCoverImage());
+                newIntent.putExtra("titulo",noticia.getTitle());
+                newIntent.putExtra("contenido",noticia.getBody());
+                startActivityForResult(newIntent,2);
+            }
+        });
 
         recyclerView = v.findViewById(R.id.generalnews_fragment_recyclerview);
 

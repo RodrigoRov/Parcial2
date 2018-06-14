@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.R;
 import com.rodrigorov.cometela.parcial2.ViewModel.NoticiaViewModel;
+import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -30,6 +31,11 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
     String token;
     String user;
     Boolean [] clicked;
+    private OnItemClick onClick;
+
+    public interface OnItemClick{
+        void OnItemClick(int position);
+    }
 
     public FavoritosAdapter(Context context, NoticiaViewModel noticiaViewModel){
         this.context = context;
@@ -47,7 +53,8 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Noticia noticia = noticias.get(position);
 
-        new DownloadImageTask(holder.imageView).execute(noticia.getCoverImage());
+
+        Picasso.with(context).load(noticia.getCoverImage()).into(holder.imageView);
         holder.titulo.setText(noticia.getTitle());
         holder.subtitulo.setText(noticia.getDescription());
 
@@ -60,6 +67,12 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
                 noticiaViewModel.deleteFavoritos(token,user,noticia.getId());
                 noticias.remove(noticia);
                 notifyDataSetChanged();
+            }
+        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClick.OnItemClick(position);
             }
         });
     }
@@ -87,30 +100,6 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
         }
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
     public void setNoticias(List<Noticia> noticias) {
         this.noticias = noticias;
         notifyDataSetChanged();
@@ -134,5 +123,13 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public void setOnClick(OnItemClick onClick) {
+        this.onClick = onClick;
+    }
+
+    public List<Noticia> getNoticias() {
+        return noticias;
     }
 }

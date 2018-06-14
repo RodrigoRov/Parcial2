@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this,LoginActivity.class);
             startActivityForResult(intent,1);
         }
+        expandableList = findViewById(R.id.navigation_explandable_view);
+        prepareListData();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -92,9 +94,6 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-
-        expandableList = findViewById(R.id.navigation_explandable_view);
-        prepareListData();
 
 
         expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {

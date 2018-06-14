@@ -50,29 +50,9 @@ public class SettingsFragment extends android.support.v4.app.Fragment{
             }
         });
 
-        /*username.setText(user.getFirstName());
-        pass.setText(user.getLastName());
-        confpass.setText(user.getPhone());*/
-
-
-
         guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* User nuevoUsu = new User(firstName.getText().toString(),
-                        lastName.getText().toString(),
-                        telefono.getText().toString(),
-                        email.getText().toString(),
-                        facebook.getText().toString());
-
-                new UpdateUser(database,nuevoUsu);
-                user = nuevoUsu;
-                Log.d("User",user.getFirstName());*/
-
-                /*username.setText(user.getFirstName());
-                pass.setText(user.getLastName());
-                confpass.setText(user.getPhone());*/
-
                 username.setEnabled(false);
                 pass.setEnabled(false);
                 confpass.setEnabled(false);
@@ -94,9 +74,6 @@ public class SettingsFragment extends android.support.v4.app.Fragment{
                     cancelar.setText(R.string.cancel);
                 }
                 else{
-                    /*username.setText(user.getFirstName());
-                    pass.setText(user.getLastName());
-                    confpass.setText(user.getPhone());*/
                     username.setEnabled(editar);
                     pass.setEnabled(editar);
                     confpass.setEnabled(editar);
