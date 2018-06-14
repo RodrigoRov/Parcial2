@@ -36,4 +36,8 @@ public class UserViewModel extends AndroidViewModel{
     public LiveData<User> getUser(String token) {
         return userRepository.getUserDetail(token);
     }
+
+    public void modifyUser(String token,String userid,String pass){
+        userRepository.updateUser(token,userid,pass);
+    }
 }

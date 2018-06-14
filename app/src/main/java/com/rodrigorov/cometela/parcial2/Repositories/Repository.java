@@ -148,10 +148,10 @@ public class Repository {
             public void onResponse(Call<User> call, retrofit2.Response<User> response) {
                 user.setUser(response.body().getUser());
                 user.setId(response.body().getId());
-                Log.d("User Id",response.body().getId());
                 user.setPassword(response.body().getPassword());
                 user.setFavoriteNews(response.body().getFavoriteNews());
                 data.setValue(user);
+                new insertUAsyncTask(userDao).execute(user);
             }
 
             @Override
@@ -162,6 +162,27 @@ public class Repository {
         });
         return data;
     }
+    public void updateUser(String token, String userid,String pass){
+        Call<User> call = gameNewsApi.modifyUser("Bearer "+token, userid, pass);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, retrofit2.Response<User> response) {
+                if (response.isSuccessful()){
+                    System.out.println(response.isSuccessful());
+                }
+                else{
+                    System.out.println("CALL  "+call.request().toString());
+                    System.out.println("RESPONSE  "+response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                System.out.println("ON FAILURE UPDATE" + t.getMessage());
+            }
+        });
+    }
+
 
 
     private static class insertUAsyncTask extends AsyncTask<User,Void,Void>{

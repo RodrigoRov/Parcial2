@@ -26,14 +26,17 @@ public class SettingsFragment extends android.support.v4.app.Fragment{
     Boolean editar = true;
     UserViewModel viewModel;
     android.support.v4.app.Fragment fragment = this;
+    User thisUser;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings,container,false);
 
+
+
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
-        String token = sharedPref.getString("TOKEN","");
+        final String token = sharedPref.getString("TOKEN","");
 
         viewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         username = v.findViewById(R.id.fragment_settings_username);
@@ -45,20 +48,29 @@ public class SettingsFragment extends android.support.v4.app.Fragment{
         viewModel.getUser(token).observe(fragment, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
+                thisUser = user;
                 username.setText(user.getUser());
-                pass.setText(user.getPassword());
             }
         });
 
         guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                username.setEnabled(false);
-                pass.setEnabled(false);
-                confpass.setEnabled(false);
-                cancelar.setText(R.string.edit);
-                guardar.setEnabled(false);
-                editar = true;
+                if(pass.getText().toString().equals(confpass.getText().toString())) {
+                    username.setEnabled(false);
+                    pass.setEnabled(false);
+                    confpass.setEnabled(false);
+                    cancelar.setText(R.string.edit);
+                    guardar.setEnabled(false);
+                    editar = true;
+                    viewModel.modifyUser(token,thisUser.getId(),pass.getText().toString());
+                    pass.setText("");
+                    confpass.setText("");
+                    Toast.makeText(getContext(),"Se han realizado los cambios",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getContext(),"Las contraseñas deben ser iguales",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
