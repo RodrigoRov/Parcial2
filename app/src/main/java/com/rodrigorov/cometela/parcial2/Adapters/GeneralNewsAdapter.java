@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.R;
 import com.rodrigorov.cometela.parcial2.ViewModel.NoticiaViewModel;
+import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
 import java.util.List;
@@ -50,7 +51,8 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Noticia noticia = noticias.get(position);
 
-        new DownloadImageTask(holder.imageView).execute(noticia.getCoverImage());
+
+        Picasso.with(context).load(noticia.getCoverImage()).into(holder.imageView);
         holder.titulo.setText(noticia.getTitle());
         holder.subtitulo.setText(noticia.getDescription());
 
@@ -61,12 +63,12 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
             }
         });
 
-        if (clicked[position]){
+        /*if (clicked[position]){
             holder.imageButton.setImageResource(android.R.drawable.btn_star_big_on);
         }
-        else{
+        else{*/
             holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
-        }
+        //}
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -23,7 +23,7 @@ public class GamesViewPagerFragment extends Fragment{
         System.out.println("Filtro" + filtro);
         System.out.println(cate[filtro-1]);
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getFragmentManager());
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
         GeneralNewsFragment fragment = new GeneralNewsFragment();
         fragment.setCate(cate);
         fragment.setFiltro(filtro);

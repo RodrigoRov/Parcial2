@@ -55,6 +55,7 @@ public class Repository {
         userDao = db.userDao();
         noticiaDao = db.noticiaDao();
         createAPI();
+
     }
 
     /*
