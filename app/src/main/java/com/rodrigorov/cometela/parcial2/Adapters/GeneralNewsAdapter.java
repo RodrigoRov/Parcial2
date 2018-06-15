@@ -28,7 +28,7 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     NoticiaViewModel noticiaViewModel;
     String token;
     String user;
-    static Boolean [] clicked;
+    Boolean [] clicked;
     private onItemClicked onClick;
 
     public interface onItemClicked{
@@ -109,39 +109,14 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
         }
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
-
     public void setNoticias(List<Noticia> noticias) {
         this.noticias = noticias;
         notifyDataSetChanged();
-        if(clicked == null) {
-            clicked = new Boolean[noticias.size()];
-            for (int i = 0; i < clicked.length; i++) {
-                clicked[i] = false;
-            }
+        clicked = new Boolean[noticias.size()];
+        int i = 0;
+        for(Noticia n:noticias){
+            clicked[i] = n.getFav() > 0;
+            i++;
         }
     }
 

@@ -13,7 +13,7 @@ import com.rodrigorov.cometela.parcial2.Database.Daos.UserDao;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
-@Database(entities = {User.class, Noticia.class}, version = 3,exportSchema = false)
+@Database(entities = {User.class, Noticia.class}, version = 4,exportSchema = false)
 public abstract class NoticiasDatabase extends RoomDatabase{
     public abstract UserDao userDao();
     public abstract NoticiaDao noticiaDao();
@@ -28,6 +28,7 @@ public abstract class NoticiasDatabase extends RoomDatabase{
                             NoticiasDatabase.class,"noticias_database")
                             .addMigrations(MIGRATION_1_2)
                             .addMigrations(MIGRATION_2_3)
+                            .addMigrations(MIGRATION_3_4)
                             .build();
                 }
             }
@@ -60,6 +61,22 @@ public abstract class NoticiasDatabase extends RoomDatabase{
                     "player_biografia TEXT," +
                     "player_avatar TEXT," +
                     "player_game TEXT);");
+        }
+    };
+
+    static final Migration MIGRATION_3_4 = new Migration(3,4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("DROP TABLE noticia_table");
+            database.execSQL("CREATE TABLE noticia_table(" +
+                    "noticia_id TEXT PRIMARY KEY NOT NULL," +
+                    "noticia_titulo TEXT," +
+                    "noticia_imagen TEXT," +
+                    "noticia_fecha TEXT," +
+                    "noticia_descripcion TEXT," +
+                    "noticia_contenido TEXT," +
+                    "noticia_juego TEXT," +
+                    "noticia_fav INTEGER DEFAULT 0 NOT NULL);");
         }
     };
 }

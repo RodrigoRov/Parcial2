@@ -77,7 +77,7 @@ public class FavoritosFragment  extends Fragment{
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        userViewModel.getUser(token).observe(this, new Observer<User>() {
+        userViewModel.getUser().observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
                 String favs = user.getFavoriteNews();

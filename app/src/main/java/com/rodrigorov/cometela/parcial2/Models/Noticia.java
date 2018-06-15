@@ -32,6 +32,10 @@ public class Noticia {
     @ColumnInfo(name = "noticia_juego")
     private String game;
 
+    @NonNull
+    @ColumnInfo(name = "noticia_fav")
+    private int fav = 0;
+
     public Noticia(String title, String imagen){
         this.title = title;
         this.coverImage = imagen;
@@ -94,5 +98,13 @@ public class Noticia {
 
     public void setGame(String game) {
         this.game = game;
+    }
+
+    public int getFav() {
+        return fav;
+    }
+
+    public void setFav(int fav) {
+        this.fav = fav;
     }
 }

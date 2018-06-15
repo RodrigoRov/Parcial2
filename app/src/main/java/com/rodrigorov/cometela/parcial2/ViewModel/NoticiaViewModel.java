@@ -25,9 +25,6 @@ public class NoticiaViewModel extends AndroidViewModel{
     }
 
     public void setFavoritos(String token,String userId,String noticiaId){
-        Log.d("Token",token);
-        Log.d("UserId",userId);
-        Log.d("Noticia Id",noticiaId);
         userRepository.setFavoritos(token,userId,noticiaId);
     }
 

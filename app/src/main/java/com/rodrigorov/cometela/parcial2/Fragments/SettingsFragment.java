@@ -33,8 +33,6 @@ public class SettingsFragment extends android.support.v4.app.Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_settings,container,false);
 
-
-
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
         final String token = sharedPref.getString("TOKEN","");
 
@@ -45,7 +43,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment{
         guardar =  v.findViewById(R.id.guardar_cambios_perfil);
         cancelar = v.findViewById(R.id.cancelar_cambios_perfil);
 
-        viewModel.getUser(token).observe(fragment, new Observer<User>() {
+        viewModel.getUser().observe(fragment, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
                 thisUser = user;

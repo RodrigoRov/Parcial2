@@ -192,9 +192,10 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
             final SharedPreferences.Editor editor = sharedPref.edit();
             token = data.getStringExtra("token");
-            userViewModel.getUser(token).observe(this, new Observer<User>() {
+            userViewModel.getUserDetail(token).observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
+                    Log.d("USER ID",user.getId());
                     editor.putString("UserId",user.getId());
                     editor.commit();
                 }

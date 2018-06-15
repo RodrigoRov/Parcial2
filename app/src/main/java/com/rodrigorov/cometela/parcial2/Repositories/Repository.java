@@ -23,17 +23,10 @@ import com.rodrigorov.cometela.parcial2.Models.Token;
 import com.rodrigorov.cometela.parcial2.Models.TopPlayers;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Singleton;
 
-import io.reactivex.disposables.CompositeDisposable;
-import okhttp3.Credentials;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,15 +40,16 @@ public class Repository {
     private final NoticiaDao noticiaDao;
     private final UserDao userDao;
     private GameNewsApi gameNewsApi;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private List<Noticia> Noticias;
+    private LiveData<List<Noticia>> Noticias;
+    private LiveData<User> User;
 
     public Repository(Application application){
         NoticiasDatabase db = NoticiasDatabase.getDatabase(application);
         userDao = db.userDao();
         noticiaDao = db.noticiaDao();
         createAPI();
-
+        Noticias = noticiaDao.getAllNoticias();
+        User = userDao.getUser();
     }
 
     /*
@@ -79,24 +73,8 @@ public class Repository {
                 .registerTypeAdapter(TopPlayers.class, new TopPlayersDeserializer())
                 .create();
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request originalRequest = chain.request();
-
-                        Request.Builder builder = originalRequest.newBuilder().header("Authorization",
-                                Credentials.basic("00357215","00357215"));
-
-                        Request newRequest = builder.build();
-                        return chain.proceed(newRequest);
-                    }
-                }).build();
-
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GameNewsApi.ENDPOINT)
-                /*.client(okHttpClient)*/
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
@@ -140,7 +118,6 @@ public class Repository {
     }
 
     public LiveData<User> getUserDetail(String token){
-        final MutableLiveData<User> data = new MutableLiveData<>();
         final User user = new User();
         Call<User> call = gameNewsApi.getActiveUser("Bearer "+token);
 
@@ -151,7 +128,6 @@ public class Repository {
                 user.setId(response.body().getId());
                 user.setPassword(response.body().getPassword());
                 user.setFavoriteNews(response.body().getFavoriteNews());
-                data.setValue(user);
                 new insertUAsyncTask(userDao).execute(user);
             }
 
@@ -161,9 +137,14 @@ public class Repository {
                 Log.d("call",call.request().toString());
             }
         });
-        return data;
+        return User;
     }
-    public void updateUser(String token, String userid,String pass){
+
+    public LiveData<User> getUser() {
+        return User;
+    }
+
+    public void updateUser(String token, String userid, String pass){
         Call<User> call = gameNewsApi.modifyUser("Bearer "+token, userid, pass);
         call.enqueue(new Callback<User>() {
             @Override
@@ -182,6 +163,20 @@ public class Repository {
                 System.out.println("ON FAILURE UPDATE" + t.getMessage());
             }
         });
+    }
+
+    private static class updateUserFavsBD extends AsyncTask<String,Void,Void>{
+
+        UserDao userDao;
+        updateUserFavsBD(UserDao userDao){
+            this.userDao = userDao;
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            userDao.updateUserFavs(strings[0],strings[1]);
+            return null;
+        }
     }
 
 
@@ -227,25 +222,17 @@ public class Repository {
         }
     }
 
-    private static class getAllNoticiasDAO extends AsyncTask<Void,Void,List<Noticia>>{
-
+    private static class FavDB extends AsyncTask<String,Void,Void>{
         NoticiaDao noticiaDao;
-        MutableLiveData<List<Noticia>> data;
 
-        getAllNoticiasDAO(NoticiaDao noticiaDao, MutableLiveData<List<Noticia>> data){
+        FavDB(NoticiaDao noticiaDao){
             this.noticiaDao = noticiaDao;
-            this.data = data;
         }
 
         @Override
-        protected List<Noticia> doInBackground(Void... voids) {
-            return noticiaDao.getAllNoticias();
-        }
-
-        @Override
-        protected void onPostExecute(List<Noticia> noticias) {
-            super.onPostExecute(noticias);
-            data.setValue(noticias);
+        protected Void doInBackground(String... strings) {
+            noticiaDao.setNoticiaFav(Boolean.parseBoolean(strings[0]),strings[1]);
+            return null;
         }
     }
 
@@ -260,14 +247,12 @@ public class Repository {
 
         @Override
         protected List<Noticia> doInBackground(String... strings) {
-            System.out.println("STRINGS EN O"+strings[0]);
             return noticiaDao.getNoticiaByGame(strings[0]);
         }
 
         @Override
         protected void onPostExecute(List<Noticia> listLiveData) {
             super.onPostExecute(listLiveData);
-            System.out.println("LISTA DE NOTICIAS BY GAME " + listLiveData.isEmpty());
             data.setValue(listLiveData);
         }
     }
@@ -288,12 +273,10 @@ public class Repository {
 
     public LiveData<List<Noticia>> getAllNoticias(String token) {
         Call<List<Noticia>> call = gameNewsApi.getNoticias("Bearer "+ token);
-        final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
         call.enqueue(new Callback<List<Noticia>>() {
             @Override
             public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
                 if(response.isSuccessful()){
-                    data.setValue(response.body());
                     if (response.body() != null) {
                         new insertNAsyncTask(noticiaDao).execute(response.body().toArray(new Noticia[response.body().size()]));
                     }
@@ -305,18 +288,29 @@ public class Repository {
             }
             @Override
             public void onFailure(Call<List<Noticia>> call, Throwable t) {
-                new getAllNoticiasDAO(noticiaDao,data).execute();
+
             }
         });
-        return data;
+        return Noticias;
     }
 
-    public void setFavoritos(String token,String userId,String noticiaId){
+    public void setFavoritos(String token, final String userId, final String noticiaId){
         Call<FavsResponse> call = gameNewsApi.guardarFav("Bearer "+token,userId,noticiaId);
         call.enqueue(new Callback<FavsResponse>() {
             @Override
             public void onResponse(Call<FavsResponse> call, retrofit2.Response<FavsResponse> response) {
                 if (response.isSuccessful()){
+                    new FavDB(noticiaDao).execute("true",noticiaId);
+                    User user = User.getValue();
+                    System.out.println(user.getId());
+                    String favoritos = User.getValue().getFavoriteNews();
+                    if (favoritos != null){
+                        favoritos = favoritos + ","+noticiaId;
+                    }
+                    else{
+                        favoritos = noticiaId;
+                    }
+                    new updateUserFavsBD(userDao).execute(favoritos,userId);
                     Log.d("Success",response.body().getSuccess());
                 }
                 else{
@@ -333,12 +327,13 @@ public class Repository {
         return;
     }
 
-    public void deleteFavoritos(String token,String userId,String noticiaId){
+    public void deleteFavoritos(String token, String userId, final String noticiaId){
         Call<ResponseBody> call = gameNewsApi.deleteFav("Bearer "+token,userId,noticiaId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 if (response.isSuccessful()){
+                    new FavDB(noticiaDao).execute("false",noticiaId);
                     Log.d("Success",response.body().toString());
                 }
                 else{
@@ -379,29 +374,6 @@ public class Repository {
         return data;
     }
 
-    public LiveData<List<Noticia>> getNoticiaByGameApi(String token, String game){
-        Call<List<Noticia>> call = gameNewsApi.getNoticiasByGame("Bearer "+token,game);
-        final MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
-        call.enqueue(new Callback<List<Noticia>>() {
-            @Override
-            public void onResponse(Call<List<Noticia>> call, retrofit2.Response<List<Noticia>> response) {
-                if(response.isSuccessful()){
-
-                    data.setValue(response.body());
-                }
-                else{
-                    Log.d("No", "Succesful");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Noticia>> call, Throwable t) {
-                Log.d("ON Failure",t.getMessage());
-            }
-        });
-        return data;
-    }
-
     public LiveData<String []> getCategorias(String token){
         final MutableLiveData<String []> data = new MutableLiveData<>();
         Call<String []> call = gameNewsApi.getCategorias("Bearer "+token);
@@ -427,8 +399,6 @@ public class Repository {
     }
 
     public LiveData<List<Noticia>> getNoticiasByGameDB(String game){
-        System.out.println("LLEGA AL NOTICIAS DB");
-        System.out.println("GAME         "+game);
         MutableLiveData<List<Noticia>> data = new MutableLiveData<>();
         new getNoticiasByGameDAO(noticiaDao,data).execute(game);
         return data;

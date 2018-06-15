@@ -29,4 +29,10 @@ public interface UserDao {
 
     @Query("SELECT * from user_table")
     LiveData<List<User>> getAllUsers();
+
+    @Query("SELECT * from user_table")
+    LiveData<User> getUser();
+
+    @Query("UPDATE user_table SET user_favorite_news = :favs WHERE user_id = :id")
+    void updateUserFavs (String favs,String id);
 }
