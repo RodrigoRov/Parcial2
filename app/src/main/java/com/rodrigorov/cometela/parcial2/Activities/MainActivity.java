@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             noticiaViewModel.deleteAll();
+            userViewModel.deleteAll();
             editor.clear();
             editor.apply();
             Intent intent = new Intent(this,LoginActivity.class);
@@ -195,8 +196,8 @@ public class MainActivity extends AppCompatActivity {
             userViewModel.getUserDetail(token).observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
-                    Log.d("USER ID",user.getId());
                     editor.putString("UserId",user.getId());
+                    editor.putString("Favoritos",user.getFavoriteNews());
                     editor.commit();
                 }
             });

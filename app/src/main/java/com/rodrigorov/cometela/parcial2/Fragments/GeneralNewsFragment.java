@@ -41,19 +41,27 @@ public class GeneralNewsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generalnews,container,false);
-
+        noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
+        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
         SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
         final String token = sharedPref.getString("TOKEN","");
         String user = sharedPref.getString("UserId","");
 
-        noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
-        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
-        swipeContainer = v.findViewById(R.id.swipeContainer);
-
         final GeneralNewsAdapter adapter = new GeneralNewsAdapter(getContext(),noticiaViewModel);
+        userViewModel.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                if (user !=null)
+                    adapter.setFavs(user.getFavoriteNews());
+            }
+        });
+
+
+        swipeContainer = v.findViewById(R.id.swipeContainer);
         adapter.setToken(token);
         adapter.setUser(user);
+
         adapter.setOnClick(new GeneralNewsAdapter.onItemClicked() {
             @Override
             public void onItemClick(int position) {
@@ -71,40 +79,8 @@ public class GeneralNewsFragment extends Fragment {
             @Override
             public void onRefresh() {
                 adapter.setNoticias(new ArrayList<Noticia>());
-                switch (filtro){
-                    case 0:
-                        noticiaViewModel.getAllnoticias(token).observe(fragment, new Observer<List<Noticia>>() {
-                            @Override
-                            public void onChanged(@Nullable List<Noticia> noticias) {
-                                adapter.setNoticias(noticias);
-                            }
-                        });
-                        break;
-                    case 1:
-                        noticiaViewModel.getNoticiaByGame(token,cate[0]).observe(fragment, new Observer<List<Noticia>>() {
-                            @Override
-                            public void onChanged(@Nullable List<Noticia> noticias) {
-                                adapter.setNoticias(noticias);
-                            }
-                        });
-                        break;
-                    case 2:
-                        noticiaViewModel.getNoticiaByGame(token,cate[1]).observe(fragment, new Observer<List<Noticia>>() {
-                            @Override
-                            public void onChanged(@Nullable List<Noticia> noticias) {
-                                adapter.setNoticias(noticias);
-                            }
-                        });
-                        break;
-                    case 3:
-                        noticiaViewModel.getNoticiaByGame(token,cate[2]).observe(fragment, new Observer<List<Noticia>>() {
-                            @Override
-                            public void onChanged(@Nullable List<Noticia> noticias) {
-                                adapter.setNoticias(noticias);
-                            }
-                        });
-                        break;
-                }
+                noticiaViewModel.getAllnoticias(token);
+                //TODO REFRESH NOTICIAS
                 swipeContainer.setRefreshing(false);
             }
         });

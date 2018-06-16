@@ -45,4 +45,8 @@ public class UserViewModel extends AndroidViewModel{
     public void modifyUser(String token,String userid,String pass){
         userRepository.updateUser(token,userid,pass);
     }
+
+    public void deleteAll(){
+        userRepository.deleteUser();
+    }
 }

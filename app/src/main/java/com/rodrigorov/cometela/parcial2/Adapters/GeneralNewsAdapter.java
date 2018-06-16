@@ -28,6 +28,7 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
     NoticiaViewModel noticiaViewModel;
     String token;
     String user;
+    String favs;
     Boolean [] clicked;
     private onItemClicked onClick;
 
@@ -75,12 +76,12 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
                 if (clicked[position]){
                     holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
                     clicked[position] = !clicked[position];
-                    noticiaViewModel.deleteFavoritos(token,user,noticia.getId());
+                    noticiaViewModel.deleteFavoritos(token,user,noticia.getId(),favs);
                 }
                 else{
                     holder.imageButton.setImageResource(android.R.drawable.btn_star_big_on);
                     clicked[position] = !clicked[position];
-                    noticiaViewModel.setFavoritos(token,user,noticia.getId());
+                    noticiaViewModel.setFavoritos(token,user,noticia.getId(),favs);
                 }
             }
         });
@@ -142,5 +143,9 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
 
     public List<Noticia> getNoticias() {
         return noticias;
+    }
+
+    public void setFavs(String favs) {
+        this.favs = favs;
     }
 }

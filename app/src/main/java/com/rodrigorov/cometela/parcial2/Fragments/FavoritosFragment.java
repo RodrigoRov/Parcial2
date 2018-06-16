@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class FavoritosFragment  extends Fragment{
         final FavoritosAdapter adapter = new FavoritosAdapter(getContext(),noticiaViewModel);
         adapter.setToken(token);
         adapter.setUser(user);
+
         adapter.setOnClick(new FavoritosAdapter.OnItemClick() {
             @Override
             public void OnItemClick(int position) {
@@ -80,19 +82,21 @@ public class FavoritosFragment  extends Fragment{
         userViewModel.getUser().observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
-                String favs = user.getFavoriteNews();
-                final List<Noticia> noticias = new ArrayList<>();
-                String[] favo = favs.split(",");
-                for(int i = 0;i<favo.length;i++) {
-                    noticiaViewModel.getNoticia(token, favo[i]).observe(fragment, new Observer<Noticia>() {
-                        @Override
-                        public void onChanged(@Nullable Noticia noticia) {
-                            noticias.add(noticia);
-                            adapter.setNoticias(noticias);
-                        }
-                    });
+                if(user != null) {
+                    String favs = user.getFavoriteNews();
+                    adapter.setFavs(favs);
+                    final List<Noticia> noticias = new ArrayList<>();
+                    String[] favo = favs.split(",");
+                    for (int i = 0; i < favo.length; i++) {
+                        noticiaViewModel.getNoticia(token, favo[i]).observe(fragment, new Observer<Noticia>() {
+                            @Override
+                            public void onChanged(@Nullable Noticia noticia) {
+                                noticias.add(noticia);
+                                adapter.setNoticias(noticias);
+                            }
+                        });
+                    }
                 }
-
             }
         });
 

@@ -23,6 +23,8 @@ import com.rodrigorov.cometela.parcial2.Models.Token;
 import com.rodrigorov.cometela.parcial2.Models.TopPlayers;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Singleton;
@@ -118,16 +120,19 @@ public class Repository {
     }
 
     public LiveData<User> getUserDetail(String token){
+        final MutableLiveData<User> data = new MutableLiveData<>();
         final User user = new User();
         Call<User> call = gameNewsApi.getActiveUser("Bearer "+token);
 
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, retrofit2.Response<User> response) {
+                Log.d("USER ID USERDETAIL    ",response.body().getId());
                 user.setUser(response.body().getUser());
                 user.setId(response.body().getId());
                 user.setPassword(response.body().getPassword());
                 user.setFavoriteNews(response.body().getFavoriteNews());
+                data.setValue(user);
                 new insertUAsyncTask(userDao).execute(user);
             }
 
@@ -137,7 +142,7 @@ public class Repository {
                 Log.d("call",call.request().toString());
             }
         });
-        return User;
+        return data;
     }
 
     public LiveData<User> getUser() {
@@ -179,6 +184,22 @@ public class Repository {
         }
     }
 
+    private static class deleteUser extends AsyncTask<Void,Void,Void>{
+
+        UserDao userDao;
+        deleteUser(UserDao userDao){
+            this.userDao = userDao;
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            userDao.deleteAll();
+            return null;
+        }
+    }
+
+    public void deleteUser(){
+        new deleteUser(userDao).execute();
+    }
 
 
     private static class insertUAsyncTask extends AsyncTask<User,Void,Void>{
@@ -192,6 +213,7 @@ public class Repository {
         @Override
         protected Void doInBackground(User... users) {
             userDao.insert(users[0]);
+            Log.d("INSERT "," SUCCESFUL");
             return null;
         }
     }
@@ -294,23 +316,22 @@ public class Repository {
         return Noticias;
     }
 
-    public void setFavoritos(String token, final String userId, final String noticiaId){
+    public void setFavoritos(String token, final String userId, final String noticiaId, final String favoritos){
         Call<FavsResponse> call = gameNewsApi.guardarFav("Bearer "+token,userId,noticiaId);
         call.enqueue(new Callback<FavsResponse>() {
             @Override
             public void onResponse(Call<FavsResponse> call, retrofit2.Response<FavsResponse> response) {
                 if (response.isSuccessful()){
                     new FavDB(noticiaDao).execute("true",noticiaId);
-                    User user = User.getValue();
-                    System.out.println(user.getId());
-                    String favoritos = User.getValue().getFavoriteNews();
-                    if (favoritos != null){
-                        favoritos = favoritos + ","+noticiaId;
+                    System.out.println("FAVORITOS: "+favoritos);
+                    String newfavs;
+                    if (!favoritos.equals("")){
+                        newfavs = favoritos + ","+noticiaId;
                     }
                     else{
-                        favoritos = noticiaId;
+                        newfavs = noticiaId;
                     }
-                    new updateUserFavsBD(userDao).execute(favoritos,userId);
+                    new updateUserFavsBD(userDao).execute(newfavs,userId);
                     Log.d("Success",response.body().getSuccess());
                 }
                 else{
@@ -327,13 +348,32 @@ public class Repository {
         return;
     }
 
-    public void deleteFavoritos(String token, String userId, final String noticiaId){
-        Call<ResponseBody> call = gameNewsApi.deleteFav("Bearer "+token,userId,noticiaId);
+    public void deleteFavoritos(String token, final String userId, final String noticiaId, final String favoritos){
+        final Call<ResponseBody> call = gameNewsApi.deleteFav("Bearer "+token,userId,noticiaId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 if (response.isSuccessful()){
                     new FavDB(noticiaDao).execute("false",noticiaId);
+                    ArrayList<String> newFavs= new ArrayList<>(Arrays.asList(favoritos.split(",")));
+                    if (newFavs.contains(noticiaId)){
+                        Log.d("TAMANO DE NEWSFAVS",String.valueOf(newFavs.size()));
+                        Log.d("SI LO CONTIENE", "TRUE");
+                        newFavs.remove(noticiaId);
+                        Log.d("TAMANO DESPUES REMOVE",String.valueOf(newFavs.size()));
+                    }
+                    StringBuilder favs = new StringBuilder();
+                    for(int i =0;i<newFavs.size();i++){
+                        if(i == newFavs.size()-1){
+                            favs.append(newFavs.get(i));
+                        }
+                        else {
+                            favs.append(newFavs.get(i));
+                            favs.append(",");
+                        }
+                    }
+                    new updateUserFavsBD(userDao).execute(favs.toString(),userId);
+                    Log.d("NEW FAVORITOS ",favs.toString());
                     Log.d("Success",response.body().toString());
                 }
                 else{

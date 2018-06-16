@@ -30,6 +30,7 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
     NoticiaViewModel noticiaViewModel;
     String token;
     String user;
+    String favs;
     Boolean [] clicked;
     private OnItemClick onClick;
 
@@ -64,7 +65,7 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
             public void onClick(View v) {
                 holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
                 clicked[position] = !clicked[position];
-                noticiaViewModel.deleteFavoritos(token,user,noticia.getId());
+                noticiaViewModel.deleteFavoritos(token,user,noticia.getId(),favs);
                 noticias.remove(noticia);
                 notifyDataSetChanged();
             }
@@ -131,5 +132,9 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
 
     public List<Noticia> getNoticias() {
         return noticias;
+    }
+
+    public void setFavs(String favs) {
+        this.favs = favs;
     }
 }
