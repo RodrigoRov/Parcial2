@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        final GeneralNewsFragment generalNewsFragment = new GeneralNewsFragment();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -247,23 +247,23 @@ public class MainActivity extends AppCompatActivity {
 
         ExpandedMenuModel item1 = new ExpandedMenuModel();
         item1.setIconName("News");
-        item1.setIconImg(R.drawable.ic_public_black_24dp);
+        item1.setIconImg(R.drawable.mundo_celeste);
         // Adding data header
         listDataHeader.add(item1);
 
         ExpandedMenuModel item2 = new ExpandedMenuModel();
         item2.setIconName("Games");
-        item2.setIconImg(R.drawable.ic_games_black_24dp);
+        item2.setIconImg(R.drawable.games_verde);
         listDataHeader.add(item2);
 
         ExpandedMenuModel item3 = new ExpandedMenuModel();
         item3.setIconName("Settings");
-        item3.setIconImg(R.drawable.ic_settings_black_24dp);
+        item3.setIconImg(R.drawable.settings_grey);
         listDataHeader.add(item3);
 
         ExpandedMenuModel item4 = new ExpandedMenuModel();
         item4.setIconName("Favoritos");
-        item4.setIconImg(R.drawable.ic_favorite_black_24dp);
+        item4.setIconImg(R.drawable.favorite_red);
         listDataHeader.add(item4);
 
         // Adding child data
