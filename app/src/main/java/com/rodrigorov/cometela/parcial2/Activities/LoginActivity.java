@@ -20,7 +20,6 @@ public class LoginActivity extends AppCompatActivity{
     EditText username,pass;
     Button button;
     UserViewModel userViewModel;
-    LiveData<String> token;
     AppCompatActivity appCompatActivity = this;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,10 +50,12 @@ public class LoginActivity extends AppCompatActivity{
                 });
             }
         });
-
-
-
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.d("SE EJECUTA BACK","PRESSED");
+        finish();
+    }
 }

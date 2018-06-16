@@ -203,6 +203,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("REQUEST CODE",String.valueOf(requestCode));
+        Log.d("RESUTL CODE",String.valueOf(resultCode));
         if(requestCode == 1 && resultCode ==1){
             SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
             final SharedPreferences.Editor editor = sharedPref.edit();
@@ -210,16 +212,18 @@ public class MainActivity extends AppCompatActivity {
             userViewModel.getUserDetail(token).observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
-                    editor.putString("UserId",user.getId());
-                    editor.putString("Favoritos",user.getFavoriteNews());
+                    editor.putString("UserId", user.getId());
+                    editor.putString("Favoritos", user.getFavoriteNews());
                     editor.commit();
                 }
             });
             playerViewModel.getAllPlayers(token);
             prepareListData();
             change_fragment = true;
-            editor.putString("TOKEN",token);
+            editor.putString("TOKEN", token);
             editor.commit();
+        }else{
+                finish();
         }
     }
 
