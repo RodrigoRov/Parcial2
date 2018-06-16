@@ -9,14 +9,17 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.rodrigorov.cometela.parcial2.Database.Daos.NoticiaDao;
+import com.rodrigorov.cometela.parcial2.Database.Daos.PlayerDao;
 import com.rodrigorov.cometela.parcial2.Database.Daos.UserDao;
 import com.rodrigorov.cometela.parcial2.Models.Noticia;
+import com.rodrigorov.cometela.parcial2.Models.TopPlayers;
 import com.rodrigorov.cometela.parcial2.Models.User;
 
-@Database(entities = {User.class, Noticia.class}, version = 4,exportSchema = false)
+@Database(entities = {User.class, Noticia.class, TopPlayers.class}, version = 5,exportSchema = false)
 public abstract class NoticiasDatabase extends RoomDatabase{
     public abstract UserDao userDao();
     public abstract NoticiaDao noticiaDao();
+    public abstract PlayerDao playerDao();
 
     private static NoticiasDatabase INSTANCE;
 
@@ -29,6 +32,7 @@ public abstract class NoticiasDatabase extends RoomDatabase{
                             .addMigrations(MIGRATION_1_2)
                             .addMigrations(MIGRATION_2_3)
                             .addMigrations(MIGRATION_3_4)
+                            .addMigrations(MIGRATION_4_5)
                             .build();
                 }
             }
@@ -77,6 +81,18 @@ public abstract class NoticiasDatabase extends RoomDatabase{
                     "noticia_contenido TEXT," +
                     "noticia_juego TEXT," +
                     "noticia_fav INTEGER DEFAULT 0 NOT NULL);");
+        }
+    };
+
+    static final Migration MIGRATION_4_5 = new Migration(4,5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            /*database.execSQL("CREATE TABLE toplayer_table(" +
+                    "player_id TEXT PRIMARY KEY NOT NULL," +
+                    "player_name TEXT," +
+                    "player_biografia TEXT," +
+                    "player_avatar TEXT," +
+                    "player_game TEXT);");*/
         }
     };
 }

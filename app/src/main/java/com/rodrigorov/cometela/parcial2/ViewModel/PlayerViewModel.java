@@ -19,7 +19,15 @@ public class PlayerViewModel extends AndroidViewModel{
         userRepository = new Repository(application);
     }
 
-    public LiveData<List<TopPlayers>> getPlayerByGame(String token, String game){
-        return userRepository.getPlayersByGame(token,game);
+    public LiveData<List<TopPlayers>> getPlayerByGame(String game){
+        return userRepository.getPlayersByGame(game);
+    }
+
+    public void getAllPlayers(String token){
+        userRepository.getAllPlayers(token);
+    }
+
+    public void deleteAll(){
+        userRepository.deletePlayers();
     }
 }

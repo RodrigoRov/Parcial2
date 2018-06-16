@@ -25,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.rodrigorov.cometela.parcial2.Adapters.ExpandableListAdapter;
 import com.rodrigorov.cometela.parcial2.Fragments.FavoritosFragment;
@@ -35,7 +37,9 @@ import com.rodrigorov.cometela.parcial2.Models.ExpandedMenuModel;
 import com.rodrigorov.cometela.parcial2.Models.User;
 import com.rodrigorov.cometela.parcial2.R;
 import com.rodrigorov.cometela.parcial2.ViewModel.NoticiaViewModel;
+import com.rodrigorov.cometela.parcial2.ViewModel.PlayerViewModel;
 import com.rodrigorov.cometela.parcial2.ViewModel.UserViewModel;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,20 +51,24 @@ public class MainActivity extends AppCompatActivity {
     String token;
     UserViewModel userViewModel;
     NoticiaViewModel noticiaViewModel;
+    PlayerViewModel playerViewModel;
     ExpandableListAdapter mMenuAdapter;
     ExpandableListView expandableList;
     List<ExpandedMenuModel> listDataHeader;
     HashMap<ExpandedMenuModel, List<String>> listDataChild;
     AppCompatActivity appCompatActivity = this;
     String [] categorias;
+    TextView username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        username = findViewById(R.id.nombre_Usuario);
 
         noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+        playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         token = sharedPref.getString("TOKEN","");
@@ -68,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this,LoginActivity.class);
             startActivityForResult(intent,1);
         }
+        playerViewModel.getAllPlayers(token);
         expandableList = findViewById(R.id.navigation_explandable_view);
         prepareListData();
 
@@ -161,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             noticiaViewModel.deleteAll();
             userViewModel.deleteAll();
+            playerViewModel.deleteAll();
             editor.clear();
             editor.apply();
             Intent intent = new Intent(this,LoginActivity.class);
@@ -196,11 +206,13 @@ public class MainActivity extends AppCompatActivity {
             userViewModel.getUserDetail(token).observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
+                    //username.setText(user.getUser());
                     editor.putString("UserId",user.getId());
                     editor.putString("Favoritos",user.getFavoriteNews());
                     editor.commit();
                 }
             });
+            playerViewModel.getAllPlayers(token);
             prepareListData();
             editor.putString("TOKEN",token);
             editor.commit();
@@ -255,6 +267,8 @@ public class MainActivity extends AppCompatActivity {
                 expandableList.setAdapter(mMenuAdapter);
             }
         });
+
+
     }
 
 }

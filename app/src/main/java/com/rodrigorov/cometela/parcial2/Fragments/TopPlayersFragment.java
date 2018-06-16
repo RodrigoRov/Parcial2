@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,19 +37,18 @@ public class TopPlayersFragment extends Fragment{
 
         playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
 
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
-        final String token = sharedPref.getString("TOKEN","");
-        System.out.println("TOKEN TPF" + token);
-
         final TopPlayersAdapter adapter = new TopPlayersAdapter(getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         RecyclerView recyclerView = v.findViewById(R.id.fragment_top_players_recycler_view);
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
+
         switch (filtro){
             case 1:
-                playerViewModel.getPlayerByGame(token,cate[0]).observe(this, new Observer<List<TopPlayers>>() {
+                Log.d("EJECUTA EL OBSERVE ","TPF");
+                playerViewModel.getPlayerByGame(cate[0]).observe(this, new Observer<List<TopPlayers>>() {
+
                     @Override
                     public void onChanged(@Nullable List<TopPlayers> topPlayers) {
                         System.out.println("IS TOP PLAYERS EMPTY:" + topPlayers.isEmpty());
@@ -59,15 +59,17 @@ public class TopPlayersFragment extends Fragment{
                 });
                 break;
             case 2:
-                playerViewModel.getPlayerByGame(token,cate[1]).observe(this, new Observer<List<TopPlayers>>() {
+                Log.d("EJECUTA EL OBSERVE ","TPF");
+                playerViewModel.getPlayerByGame(cate[1]).observe(this, new Observer<List<TopPlayers>>() {
                     @Override
                     public void onChanged(@Nullable List<TopPlayers> topPlayers) {
                         adapter.setPlayers(topPlayers);
                     }
-                });;
+                });
                 break;
             case 3:
-                playerViewModel.getPlayerByGame(token,cate[2]).observe(this, new Observer<List<TopPlayers>>() {
+                Log.d("EJECUTA EL OBSERVE ","TPF");
+                playerViewModel.getPlayerByGame(cate[2]).observe(this, new Observer<List<TopPlayers>>() {
                     @Override
                     public void onChanged(@Nullable List<TopPlayers> topPlayers) {
                         adapter.setPlayers(topPlayers);

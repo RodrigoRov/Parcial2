@@ -3,6 +3,7 @@ package com.rodrigorov.cometela.parcial2.Repositories;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.icu.text.LocaleDisplayNames;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -15,6 +16,7 @@ import com.rodrigorov.cometela.parcial2.Api.TokenDeserializer;
 import com.rodrigorov.cometela.parcial2.Api.TopPlayersDeserializer;
 import com.rodrigorov.cometela.parcial2.Api.UserDeserializer;
 import com.rodrigorov.cometela.parcial2.Database.Daos.NoticiaDao;
+import com.rodrigorov.cometela.parcial2.Database.Daos.PlayerDao;
 import com.rodrigorov.cometela.parcial2.Database.Daos.UserDao;
 import com.rodrigorov.cometela.parcial2.Database.NoticiasDatabase;
 import com.rodrigorov.cometela.parcial2.Models.FavsResponse;
@@ -22,6 +24,7 @@ import com.rodrigorov.cometela.parcial2.Models.Noticia;
 import com.rodrigorov.cometela.parcial2.Models.Token;
 import com.rodrigorov.cometela.parcial2.Models.TopPlayers;
 import com.rodrigorov.cometela.parcial2.Models.User;
+import com.rodrigorov.cometela.parcial2.ViewModel.PlayerViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +33,10 @@ import java.util.List;
 import javax.inject.Singleton;
 
 import okhttp3.ResponseBody;
+import okhttp3.internal.platform.Platform;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -41,14 +46,17 @@ public class Repository {
 
     private final NoticiaDao noticiaDao;
     private final UserDao userDao;
+    private final PlayerDao playerDao;
     private GameNewsApi gameNewsApi;
     private LiveData<List<Noticia>> Noticias;
     private LiveData<User> User;
+    private LiveData<TopPlayers> players;
 
     public Repository(Application application){
         NoticiasDatabase db = NoticiasDatabase.getDatabase(application);
         userDao = db.userDao();
         noticiaDao = db.noticiaDao();
+        playerDao = db.playerDao();
         createAPI();
         Noticias = noticiaDao.getAllNoticias();
         User = userDao.getUser();
@@ -292,6 +300,28 @@ public class Repository {
         }
     }
 
+    private static class getNoticia extends AsyncTask<String,Void,Noticia>{
+        NoticiaDao noticiaDao;
+        LiveData<Noticia> noti;
+        MutableLiveData<Noticia> data;
+        getNoticia(NoticiaDao noticiaDao,MutableLiveData<Noticia> noticiaLiveData){
+            this.noticiaDao = noticiaDao;
+            data = noticiaLiveData;
+        }
+        @Override
+        protected Noticia doInBackground(String... strings) {
+            Log.d("NOTICIA ID",strings[0]);
+            return noticiaDao.getNoticia(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Noticia noticiaLiveData) {
+            super.onPostExecute(noticiaLiveData);
+            Log.d("SE EJECUTA","ON POST");
+            data.setValue(noticiaLiveData);
+        }
+    }
+
 
     public LiveData<List<Noticia>> getAllNoticias(String token) {
         Call<List<Noticia>> call = gameNewsApi.getNoticias("Bearer "+ token);
@@ -349,31 +379,28 @@ public class Repository {
     }
 
     public void deleteFavoritos(String token, final String userId, final String noticiaId, final String favoritos){
+        new FavDB(noticiaDao).execute("false",noticiaId);
+        ArrayList<String> newFavs= new ArrayList<>(Arrays.asList(favoritos.split(",")));
+        if (newFavs.contains(noticiaId)){
+            newFavs.remove(noticiaId);
+        }
+        StringBuilder favs = new StringBuilder();
+        for(int i =0;i<newFavs.size();i++){
+            if(i == newFavs.size()-1){
+                favs.append(newFavs.get(i));
+            }
+            else {
+                favs.append(newFavs.get(i));
+                favs.append(",");
+            }
+        }
+        new updateUserFavsBD(userDao).execute(favs.toString(),userId);
+        Log.d("NEW FAVORITOS ",favs.toString());
         final Call<ResponseBody> call = gameNewsApi.deleteFav("Bearer "+token,userId,noticiaId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 if (response.isSuccessful()){
-                    new FavDB(noticiaDao).execute("false",noticiaId);
-                    ArrayList<String> newFavs= new ArrayList<>(Arrays.asList(favoritos.split(",")));
-                    if (newFavs.contains(noticiaId)){
-                        Log.d("TAMANO DE NEWSFAVS",String.valueOf(newFavs.size()));
-                        Log.d("SI LO CONTIENE", "TRUE");
-                        newFavs.remove(noticiaId);
-                        Log.d("TAMANO DESPUES REMOVE",String.valueOf(newFavs.size()));
-                    }
-                    StringBuilder favs = new StringBuilder();
-                    for(int i =0;i<newFavs.size();i++){
-                        if(i == newFavs.size()-1){
-                            favs.append(newFavs.get(i));
-                        }
-                        else {
-                            favs.append(newFavs.get(i));
-                            favs.append(",");
-                        }
-                    }
-                    new updateUserFavsBD(userDao).execute(favs.toString(),userId);
-                    Log.d("NEW FAVORITOS ",favs.toString());
                     Log.d("Success",response.body().toString());
                 }
                 else{
@@ -390,27 +417,10 @@ public class Repository {
         });
     }
 
-    public LiveData<Noticia> getNoticia(String token,String noticiaId){
-        Call<Noticia> call = gameNewsApi.getNoticiaDetail("Bearer "+token,noticiaId);
+    public LiveData<Noticia> getNoticia(String token, final String noticiaId){
         final MutableLiveData<Noticia> data = new MutableLiveData<>();
-        call.enqueue(new Callback<Noticia>() {
-            @Override
-            public void onResponse(Call<Noticia> call, retrofit2.Response<Noticia> response) {
-                if (response.isSuccessful()){
-                    //TODO que salga de base datos
-                    data.setValue(response.body());
-                }
-                else {
-                    Log.d("call",call.request().toString());
-                    Log.d("REsponse",response.message());
-                    Log.d("Error","Not succesful");
-                }
-            }
-            @Override
-            public void onFailure(Call<Noticia> call, Throwable t) {
-                Log.d("Failure",t.getMessage());
-            }
-        });
+        new getNoticia(noticiaDao,data).execute(noticiaId);
+        Log.d("GET NOTICIA", "ENTRA");
         return data;
     }
 
@@ -456,29 +466,79 @@ public class Repository {
     *
      */
 
-    public LiveData<List<TopPlayers>> getPlayersByGame(String token,String game){
+    public LiveData<List<TopPlayers>> getPlayersByGame(String game){
         final MutableLiveData<List<TopPlayers>> data = new MutableLiveData<>();
-        Call<List<TopPlayers>> call = gameNewsApi.getPlayersByGame("Bearer "+token,game);
+        new getPlayersBygame(playerDao,data).execute(game);
+        return data;
+    }
+
+    public void deletePlayers(){
+        new deletePlayers(playerDao).execute();
+    }
+
+    public void getAllPlayers(String token){
+        Call<List<TopPlayers>> call = gameNewsApi.getPlayers("Bearer "+token);
         call.enqueue(new Callback<List<TopPlayers>>() {
             @Override
-            public void onResponse(Call<List<TopPlayers>> call, retrofit2.Response<List<TopPlayers>> response) {
+            public void onResponse(Call<List<TopPlayers>> call, Response<List<TopPlayers>> response) {
                 if (response.isSuccessful()){
-                    data.setValue(response.body());
-                    System.out.println("Success");
+                    Log.d("GET ALL PLAYERS ","SUCCESFUL");
+                    new insertPlayersAsync(playerDao).execute(response.body().toArray(new TopPlayers[response.body().size()]));
                 }
                 else{
-                   Log.d("No succesful","no");
+                    Log.d("GET ALL PLAYERS","NO SUCCESFUL");
+                    Log.d("RESPONSE",response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<TopPlayers>> call, Throwable t) {
-                Log.d("On failure",t.getMessage());
+                Log.d("ERROR GET ALL PLAYERS",t.getMessage());
             }
         });
-        return data;
     }
 
+    private static class insertPlayersAsync extends AsyncTask<TopPlayers,Void,Void>{
+        PlayerDao playerDao;
+        insertPlayersAsync(PlayerDao playerDao){
+            this.playerDao = playerDao;
+        }
+        @Override
+        protected Void doInBackground(TopPlayers... players) {
+            playerDao.insert(players);
+            return null;
+        }
+    }
+    private static class getPlayersBygame extends AsyncTask<String,Void,List<TopPlayers>>{
+        PlayerDao playerDao;
+        MutableLiveData<List<TopPlayers>> data;
+        getPlayersBygame(PlayerDao playerDao,MutableLiveData<List<TopPlayers>> data){
+            this.playerDao = playerDao;
+            this.data = data;
+        }
+        @Override
+        protected List<TopPlayers> doInBackground(String... strings) {
+            Log.d("BACKGROUND ","TOP PLAYERS");
+            return playerDao.getAllPlayersByGame(strings[0]);
+        }
 
+        @Override
+        protected void onPostExecute(List<TopPlayers> topPlayers) {
+            super.onPostExecute(topPlayers);
+            Log.d("ON POST EXECUTE","TOP PLAYERS");
+            data.setValue(topPlayers);
+        }
+    }
 
+    public static class deletePlayers extends AsyncTask<Void,Void,Void>{
+        PlayerDao playerDao;
+        deletePlayers(PlayerDao playerDao){
+            this.playerDao = playerDao;
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            playerDao.deleteAll();
+            return null;
+        }
+    }
 }

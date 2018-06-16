@@ -25,8 +25,6 @@ public interface GameNewsApi {
     String ENDPOINT = "http://gamenewsuca.herokuapp.com";
 
     //USUARIO
-    @GET("/users")
-    Single<List<User>> getUsers();
 
     @FormUrlEncoded
     @POST("/users")
@@ -40,9 +38,6 @@ public interface GameNewsApi {
     @PUT("/users/{idUser}")
     Call<User> modifyUser(@Header("Authorization") String codigo,@Path("idUser") String idUser,@Field("password") String pass);
 
-    /*@GET("/users/{idUser}")
-    Call<User> getActiveUser(@Path("idUser") String idUser);
-*/
 
     @GET("/users/detail")
     Call<User> getActiveUser(@Header("Authorization") String codigo);
@@ -75,6 +70,8 @@ public interface GameNewsApi {
     @GET("/players/type/{game}")
     Call<List<TopPlayers>> getPlayersByGame(@Header("Authorization") String string,@Path("game") String game);
 
+    @GET("/players")
+    Call<List<TopPlayers>> getPlayers(@Header("Authorization") String string);
 
 
 }
