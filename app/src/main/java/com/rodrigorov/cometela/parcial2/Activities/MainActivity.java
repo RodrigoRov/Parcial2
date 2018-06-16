@@ -268,7 +268,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Adding child data
 
-        noticiaViewModel.getCategorias(token).observe(this, new Observer<String[]>() {
+        List<String> heading2 = new ArrayList<>();
+        heading2.add("Overwatch");
+        heading2.add("CSGO");
+        heading2.add("League of Legends");
+        listDataChild.put(listDataHeader.get(1),heading2);
+        categorias = new String[]{"overwatch","csgo","lol"};
+        mMenuAdapter = new ExpandableListAdapter(appCompatActivity, listDataHeader, listDataChild, expandableList);
+        expandableList.setAdapter(mMenuAdapter);
+        /*noticiaViewModel.getCategorias(token).observe(this, new Observer<String[]>() {
             @Override
             public void onChanged(@Nullable String[] strings) {
                 categorias = strings != null ? strings.clone() : new String[0];
@@ -283,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
                 // setting list adapter
                 expandableList.setAdapter(mMenuAdapter);
             }
-        });
+        });*/
 
 
     }
