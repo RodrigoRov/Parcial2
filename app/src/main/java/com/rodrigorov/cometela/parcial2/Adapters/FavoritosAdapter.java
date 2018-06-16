@@ -54,28 +54,29 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Noticia noticia = noticias.get(position);
 
+        if(noticia!=null) {
+            Picasso.with(context).load(noticia.getCoverImage()).into(holder.imageView);
+            holder.titulo.setText(noticia.getTitle());
+            holder.subtitulo.setText(noticia.getDescription());
 
-        Picasso.with(context).load(noticia.getCoverImage()).into(holder.imageView);
-        holder.titulo.setText(noticia.getTitle());
-        holder.subtitulo.setText(noticia.getDescription());
-
-        holder.imageButton.setImageResource(android.R.drawable.btn_star_big_on);
-        holder.imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
-                clicked[position] = !clicked[position];
-                noticiaViewModel.deleteFavoritos(token,user,noticia.getId(),favs);
-                noticias.remove(noticia);
-                notifyDataSetChanged();
-            }
-        });
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClick.OnItemClick(position);
-            }
-        });
+            holder.imageButton.setImageResource(android.R.drawable.btn_star_big_on);
+            holder.imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
+                    clicked[position] = !clicked[position];
+                    noticiaViewModel.deleteFavoritos(token, user, noticia.getId(), favs);
+                    noticias.remove(noticia);
+                    notifyDataSetChanged();
+                }
+            });
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClick.OnItemClick(position);
+                }
+            });
+        }
     }
 
     @Override

@@ -28,12 +28,16 @@ public class GamesViewPagerFragment extends Fragment{
         fragment.setCate(cate);
         fragment.setFiltro(filtro);
         viewPagerAdapter.AddItem("Noticias",fragment);
-        TopPlayersFragment fragment1 = new TopPlayersFragment();
-        fragment1.setCate(cate);
-        fragment1.setFiltro(filtro);
-        viewPagerAdapter.AddItem("Top Players",fragment1);
-        viewPagerAdapter.AddItem("Imagenes",new ImagesFragment());
 
+        TopPlayersFragment toplayerfragment = new TopPlayersFragment();
+        toplayerfragment.setCate(cate);
+        toplayerfragment.setFiltro(filtro);
+        viewPagerAdapter.AddItem("Top Players",toplayerfragment);
+
+        ImagesFragment imagesFragment = new ImagesFragment();
+        imagesFragment.setCate(cate);
+        imagesFragment.setFiltro(filtro);
+        viewPagerAdapter.AddItem("Imagenes",imagesFragment);
 
         android.support.v4.view.ViewPager viewPager = v.findViewById(R.id.view_pager);
         viewPager.setAdapter(viewPagerAdapter);

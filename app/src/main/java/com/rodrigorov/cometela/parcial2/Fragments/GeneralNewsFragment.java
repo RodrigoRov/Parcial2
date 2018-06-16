@@ -112,7 +112,7 @@ public class GeneralNewsFragment extends Fragment {
                 });
                 break;
             case 1:
-                noticiaViewModel.getNoticiaByGame(token,cate[0]).observe(this, new Observer<List<Noticia>>() {
+                noticiaViewModel.getNoticiaByGame(cate[0]).observe(this, new Observer<List<Noticia>>() {
                     @Override
                     public void onChanged(@Nullable List<Noticia> noticias) {
                         adapter.setNoticias(noticias);
@@ -120,7 +120,7 @@ public class GeneralNewsFragment extends Fragment {
                 });
                 break;
             case 2:
-                noticiaViewModel.getNoticiaByGame(token,cate[1]).observe(this, new Observer<List<Noticia>>() {
+                noticiaViewModel.getNoticiaByGame(cate[1]).observe(this, new Observer<List<Noticia>>() {
                     @Override
                     public void onChanged(@Nullable List<Noticia> noticias) {
                         adapter.setNoticias(noticias);
@@ -128,7 +128,7 @@ public class GeneralNewsFragment extends Fragment {
                 });
                 break;
             case 3:
-                noticiaViewModel.getNoticiaByGame(token,cate[2]).observe(this, new Observer<List<Noticia>>() {
+                noticiaViewModel.getNoticiaByGame(cate[2]).observe(this, new Observer<List<Noticia>>() {
                     @Override
                     public void onChanged(@Nullable List<Noticia> noticias) {
                         adapter.setNoticias(noticias);

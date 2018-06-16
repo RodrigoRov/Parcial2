@@ -25,20 +25,19 @@ import java.util.Objects;
 
 public class ImagesFragment extends Fragment {
     NoticiaViewModel noticiaViewModel;
+    String cate[];
+    int filtro=1;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_images,container,false);
 
-        SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
-        String token = sharedPref.getString("TOKEN","");
-
         final RecyclerView recyclerView = v.findViewById(R.id.fragment_images_recycler_view);
         noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
 
 
-        noticiaViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
+        noticiaViewModel.getNoticiaByGame(cate[filtro-1]).observe(this, new Observer<List<Noticia>>() {
             @Override
             public void onChanged(@Nullable List<Noticia> noticias) {
                 ImagesAdapter imagesAdapter = new ImagesAdapter(getContext(),noticias);
@@ -51,4 +50,19 @@ public class ImagesFragment extends Fragment {
         return v;
     }
 
+    public String[] getCate() {
+        return cate;
+    }
+
+    public void setCate(String[] cate) {
+        this.cate = cate;
+    }
+
+    public int getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(int filtro) {
+        this.filtro = filtro;
+    }
 }
