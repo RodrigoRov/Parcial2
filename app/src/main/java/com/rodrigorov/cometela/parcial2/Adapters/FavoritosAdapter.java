@@ -81,10 +81,12 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
 
     @Override
     public int getItemCount() {
-        if (noticias != null)
+        if (noticias != null) {
+            Log.d(" TAMANO NOTICIAS",String.valueOf(noticias.size()));
             return noticias.size();
-        else
+        }else
             return 0;
+
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{

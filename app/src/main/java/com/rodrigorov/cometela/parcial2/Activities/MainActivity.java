@@ -58,13 +58,12 @@ public class MainActivity extends AppCompatActivity {
     HashMap<ExpandedMenuModel, List<String>> listDataChild;
     AppCompatActivity appCompatActivity = this;
     String [] categorias;
-    TextView username;
+    Boolean change_fragment = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        username = findViewById(R.id.nombre_Usuario);
 
         noticiaViewModel = ViewModelProviders.of(this).get(NoticiaViewModel.class);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
@@ -103,7 +102,12 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-
+        GeneralNewsFragment fragment = new GeneralNewsFragment();
+        fragment.setFiltro(0);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.contentFrame,fragment);
+        fragmentTransaction.commit();
 
         expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -206,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
             userViewModel.getUserDetail(token).observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
-                    //username.setText(user.getUser());
                     editor.putString("UserId",user.getId());
                     editor.putString("Favoritos",user.getFavoriteNews());
                     editor.commit();
@@ -214,16 +217,30 @@ public class MainActivity extends AppCompatActivity {
             });
             playerViewModel.getAllPlayers(token);
             prepareListData();
+            change_fragment = true;
             editor.putString("TOKEN",token);
             editor.commit();
         }
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (change_fragment){
+            GeneralNewsFragment fragment = new GeneralNewsFragment();
+            fragment.setFiltro(0);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.contentFrame,fragment);
+            fragmentTransaction.commit();
+        }
+    }
+
     /*
 
-    PREPARE DATA FOR LIST
+        PREPARE DATA FOR LIST
 
-     */
+         */
     private void prepareListData() {
         listDataHeader = new ArrayList<ExpandedMenuModel>();
         listDataChild = new HashMap<ExpandedMenuModel, List<String>>();

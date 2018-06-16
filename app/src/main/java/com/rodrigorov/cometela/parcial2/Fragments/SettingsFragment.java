@@ -47,7 +47,8 @@ public class SettingsFragment extends android.support.v4.app.Fragment{
             @Override
             public void onChanged(@Nullable User user) {
                 thisUser = user;
-                username.setText(user.getUser());
+                if(user!=null)
+                    username.setText(user.getUser());
             }
         });
 

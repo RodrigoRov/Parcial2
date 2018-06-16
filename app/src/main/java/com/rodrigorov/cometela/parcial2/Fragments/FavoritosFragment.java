@@ -47,7 +47,7 @@ public class FavoritosFragment  extends Fragment{
         final String token = sharedPref.getString("TOKEN","");
         String user = sharedPref.getString("UserId","");
 
-        RecyclerView recyclerView = v.findViewById(R.id.generalnews_fragment_recyclerview);
+        final RecyclerView recyclerView = v.findViewById(R.id.generalnews_fragment_recyclerview);
 
         final FavoritosAdapter adapter = new FavoritosAdapter(getContext(),noticiaViewModel);
         adapter.setToken(token);
@@ -65,9 +65,6 @@ public class FavoritosFragment  extends Fragment{
             }
         });
 
-        recyclerView = v.findViewById(R.id.generalnews_fragment_recyclerview);
-
-
         mLayoutManager = new GridLayoutManager(getActivity(), 2);
         mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -76,26 +73,34 @@ public class FavoritosFragment  extends Fragment{
             }
         });
 
-        recyclerView.setAdapter(adapter);
+
         recyclerView.setLayoutManager(mLayoutManager);
 
-        userViewModel.getUser().observe(this, new Observer<User>() {
+        userViewModel.getUserDetail(token).observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
                 if(user != null) {
                     String favs = user.getFavoriteNews();
-                    adapter.setFavs(favs);
-                    final List<Noticia> noticias = new ArrayList<>();
-                    String[] favo = favs.split(",");
-                    for (int i = 0; i < favo.length; i++) {
-                        noticiaViewModel.getNoticia(token, favo[i]).observe(fragment, new Observer<Noticia>() {
-                            @Override
-                            public void onChanged(@Nullable Noticia noticia) {
-                                noticias.add(noticia);
-                                adapter.setNoticias(noticias);
-                            }
-                        });
+                    if (favs.equals(""))
+                        Log.d("FAVS","SI ES IGUAL");
+                    else{
+                        recyclerView.setAdapter(adapter);
+                        Log.d("FAVS","No ES IGUAL");
+                        adapter.setFavs(favs);
+                        final List<Noticia> noticias = new ArrayList<>();
+                        String[] favo = favs.split(",");
+                        Log.d("favo SIZE",String.valueOf(favo.length));
+                        for (int i = 0; i < favo.length; i++) {
+                            noticiaViewModel.getNoticia(token, favo[i]).observe(fragment, new Observer<Noticia>() {
+                                @Override
+                                public void onChanged(@Nullable Noticia noticia) {
+                                    noticias.add(noticia);
+                                    adapter.setNoticias(noticias);
+                                }
+                            });
+                        }
                     }
+
                 }
             }
         });
