@@ -103,7 +103,7 @@ public class GeneralNewsFragment extends Fragment {
 
         switch (filtro){
             case 0:
-                noticiaViewModel.getAllnoticias(token).observe(this, new Observer<List<Noticia>>() {
+                noticiaViewModel.getNoticias().observe(this, new Observer<List<Noticia>>() {
                     @Override
                     public void onChanged(@Nullable List<Noticia> noticias) {
                         adapter.setNoticias(noticias);

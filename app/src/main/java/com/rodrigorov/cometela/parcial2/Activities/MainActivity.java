@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent,1);
         }
         playerViewModel.getAllPlayers(token);
+        noticiaViewModel.getAllnoticias(token);
         expandableList = findViewById(R.id.navigation_explandable_view);
         prepareListData();
 
@@ -218,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             playerViewModel.getAllPlayers(token);
+            noticiaViewModel.getAllnoticias(token);
             prepareListData();
             change_fragment = true;
             editor.putString("TOKEN", token);

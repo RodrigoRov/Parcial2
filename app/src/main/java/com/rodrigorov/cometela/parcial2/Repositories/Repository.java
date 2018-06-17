@@ -346,6 +346,10 @@ public class Repository {
         return Noticias;
     }
 
+    public LiveData<List<Noticia>> getNoticias(){
+        return Noticias;
+    }
+
     public void setFavoritos(String token, final String userId, final String noticiaId, final String favoritos){
         new FavDB(noticiaDao).execute("true",noticiaId);
         System.out.println("FAVORITOS: "+favoritos);

@@ -49,4 +49,8 @@ public class NoticiaViewModel extends AndroidViewModel{
         userRepository.deleteAllNoticias();
     }
 
+    public LiveData<List<Noticia>> getNoticias(){
+        return userRepository.getNoticias();
+    }
+
 }
