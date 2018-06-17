@@ -64,12 +64,12 @@ public class GeneralNewsAdapter extends RecyclerView.Adapter<GeneralNewsAdapter.
             }
         });
 
-        /*if (clicked[position]){
+        if (clicked[position]){
             holder.imageButton.setImageResource(android.R.drawable.btn_star_big_on);
         }
-        else{*/
+        else{
             holder.imageButton.setImageResource(android.R.drawable.btn_star_big_off);
-        //}
+        }
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
