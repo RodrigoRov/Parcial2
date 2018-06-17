@@ -76,7 +76,7 @@ public class FavoritosFragment  extends Fragment{
 
         recyclerView.setLayoutManager(mLayoutManager);
 
-        userViewModel.getUserDetail(token).observe(this, new Observer<User>() {
+        userViewModel.getUser().observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
                 if(user != null) {

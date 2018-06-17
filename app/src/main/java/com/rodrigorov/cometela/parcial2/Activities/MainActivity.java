@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             change_fragment = true;
             editor.putString("TOKEN", token);
             editor.commit();
-        }else{
+        }else if(requestCode == 1 && resultCode==0){
                 finish();
         }
     }

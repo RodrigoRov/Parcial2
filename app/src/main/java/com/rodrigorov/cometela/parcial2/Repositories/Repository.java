@@ -347,21 +347,21 @@ public class Repository {
     }
 
     public void setFavoritos(String token, final String userId, final String noticiaId, final String favoritos){
+        new FavDB(noticiaDao).execute("true",noticiaId);
+        System.out.println("FAVORITOS: "+favoritos);
+        String newfavs;
+        if (!favoritos.equals("")){
+            newfavs = favoritos + ","+noticiaId;
+        }
+        else{
+            newfavs = noticiaId;
+        }
+        new updateUserFavsBD(userDao).execute(newfavs,userId);
         Call<FavsResponse> call = gameNewsApi.guardarFav("Bearer "+token,userId,noticiaId);
         call.enqueue(new Callback<FavsResponse>() {
             @Override
             public void onResponse(Call<FavsResponse> call, retrofit2.Response<FavsResponse> response) {
                 if (response.isSuccessful()){
-                    new FavDB(noticiaDao).execute("true",noticiaId);
-                    System.out.println("FAVORITOS: "+favoritos);
-                    String newfavs;
-                    if (!favoritos.equals("")){
-                        newfavs = favoritos + ","+noticiaId;
-                    }
-                    else{
-                        newfavs = noticiaId;
-                    }
-                    new updateUserFavsBD(userDao).execute(newfavs,userId);
                     Log.d("Success",response.body().getSuccess());
                 }
                 else{

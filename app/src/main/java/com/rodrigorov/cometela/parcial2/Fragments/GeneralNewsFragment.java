@@ -80,7 +80,6 @@ public class GeneralNewsFragment extends Fragment {
             public void onRefresh() {
                 adapter.setNoticias(new ArrayList<Noticia>());
                 noticiaViewModel.getAllnoticias(token);
-                //TODO REFRESH NOTICIAS
                 swipeContainer.setRefreshing(false);
             }
         });
